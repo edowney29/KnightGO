@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.maclaudio.knightgo">
+    package="com.ucf.knightgo">
 
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
@@ -15,7 +15,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".mainmenu">
+        <activity android:name="com.ucf.knightgo.mainmenu">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -28,9 +28,9 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".MapsActivity"
+            android:name="com.ucf.knightgo.MapsActivity"
             android:label="@string/title_activity_maps" />
-        <activity android:name=".tutorialActivity"></activity>
+        <activity android:name="com.ucf.knightgo.tutorialActivity"></activity>
     </application>
 
 </manifest>

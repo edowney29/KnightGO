@@ -1,4 +1,4 @@
-package com.maclaudio.knightgo;
+package com.ucf.knightgo;
 
 import org.junit.Test;
 

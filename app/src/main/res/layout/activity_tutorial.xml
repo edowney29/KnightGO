@@ -8,7 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.maclaudio.knightgo.tutorialActivity">
+    tools:context="com.ucf.knightgo.tutorialActivity">
 
     <TextView
         android:text="Welcome to Knight GO! Here's how to get started."

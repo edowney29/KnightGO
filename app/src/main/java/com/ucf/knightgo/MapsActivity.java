@@ -1,4 +1,4 @@
-package com.maclaudio.knightgo;
+package com.ucf.knightgo;
 
 import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
