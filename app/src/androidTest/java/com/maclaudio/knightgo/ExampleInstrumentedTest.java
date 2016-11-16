@@ -1,4 +1,4 @@
-package ucf.knightgo;
+package com.maclaudio.knightgo;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("ucf.knightgo", appContext.getPackageName());
+        assertEquals("com.maclaudio.knightgo", appContext.getPackageName());
     }
 }
