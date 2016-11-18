@@ -141,6 +141,11 @@ public class Knight
     private double getLatitude(){return latitude;}
     private double getLongitude(){return longitude;}
 
+    //setters - setting location and enemy status
+    private void setXLoc(int x){this.xLoc = x;}
+    private void setYLoc(int y){this .yLoc = y;}
+    private void SetIsEnemy(boolean status){this.isEnemy = status;}
+
     //modifiers - for Decreasing health when needed and potential dmg mods
 	private void modHealth(int modifier){this.health += modifier;}
 	private void modDamage(int modifier){this.damage += modifier;}
