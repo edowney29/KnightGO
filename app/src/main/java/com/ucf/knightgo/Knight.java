@@ -149,13 +149,15 @@ public class Knight
     //modifiers - for Decreasing health when needed and potential dmg mods
 	private void modHealth(int modifier){this.health += modifier;}
 	private void modDamage(int modifier){this.damage += modifier;}
-	
+
+    //TODO: Finish move
     //moving - will move forward until hitting another unit(?)
     public Knight[][] move(Knight knight, Knight[][] board)
     {
         return null;
     }
-    
+
+    //TODO: Finish attack
     //attacking - special attacks switch with basic as default
 	public void attack(Knight attacker, Knight[][] board)
 	{}
