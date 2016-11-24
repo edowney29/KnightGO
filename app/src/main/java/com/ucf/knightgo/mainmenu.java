@@ -11,6 +11,7 @@ public class mainmenu extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mainmenu);
+
     }
 
     public void openMap(View view)

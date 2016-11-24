@@ -1,8 +1,8 @@
 package com.ucf.knightgo;
 import java.util.Random;
 
-public class Knight
-{
+public class Knight {
+
     /* Under the assumption knightList will be a freq. array,
     the value representing the quantity and index representing type
     (Ex: knightList[1] = 3; //means the player has three bowman)*/
@@ -12,6 +12,7 @@ public class Knight
         {
             case 0://SHIELD
             {
+                this.name = "Shield";
                 this.health =   10;
                 this.damage =   1;
                 this.range =    1;
@@ -21,6 +22,7 @@ public class Knight
 
             case 1://BOW
             {
+                this.name = "Bow";
                 this.health =   1;
                 this.damage =   3;
                 this.range =    3;
@@ -30,6 +32,7 @@ public class Knight
 
             case 2://CROSSBOW
             {
+                this.name = "Crossbow";
                 this.health =   2;
                 this.damage =   2;
                 this.range =    2;
@@ -39,6 +42,7 @@ public class Knight
 
             case 3://SPEAR
             {
+                this.name = "Spear";
                 this.health =   4;
                 this.damage =   3;
                 this.range =    2;
@@ -48,6 +52,7 @@ public class Knight
 
             case 4://SWORD
             {
+                this.name = "Sword";
                 this.health =   3;
                 this.damage =   2;
                 this.range =    2;
@@ -57,6 +62,7 @@ public class Knight
 
             case 5://AXE
             {
+                this.name = "Axe";
                 this.health =   5;
                 this.damage =   4;
                 this.range =    1;
@@ -66,6 +72,7 @@ public class Knight
 
             case 6://MACE
             {
+                this.name = "Mace";
                 this.health =   6;
                 this.damage =   3;
                 this.range =    1;
@@ -75,6 +82,7 @@ public class Knight
 
             case 7://DAGGER
             {
+                this.name = "Dagger";
                 this.health =   1;
                 this.damage =   6;
                 this.range =    1;
@@ -84,6 +92,7 @@ public class Knight
 
             case 8://HALBERD
             {
+                this.name = "Halberd";
                 this.health =   7;
                 this.damage =   4;
                 this.range =    1;
@@ -93,6 +102,7 @@ public class Knight
 
             case 9://PEGASUS
             {
+                this.name = "Pegasus";
                 this.health =   5;
                 this.damage =   5;
                 this.range =    1;
@@ -101,6 +111,7 @@ public class Knight
             }
 
             default:
+                this.name = "";
                 this.health =   1;
                 this.damage =   1;
                 this.range =    1;
@@ -110,8 +121,9 @@ public class Knight
     }
 
     // extra constructor
-    Knight(int health, int damage, int range, int movement)
+    Knight(String name, int health, int damage, int range, int movement)
     {
+        this.name = name;
         this.health = health;
         this.damage = damage;
         this.range = range;
@@ -122,6 +134,7 @@ public class Knight
 	private int damage;
 	private int range;
 	private int movement;
+    private String name;
 
     private boolean isEnemy;
     private int xLoc;
@@ -131,20 +144,21 @@ public class Knight
     private double longitude;
 
 	//getters
-	private int getHealth(){return health;}
-	private int getDamage(){return damage;}
-	private int getRange(){return range;}
-	private int getMovement(){return movement;}
-    private boolean isEnemy(){return isEnemy;}
-	private int getXLoc(){return xLoc;}
-    private int getYLoc(){return yLoc;}
-    private double getLatitude(){return latitude;}
-    private double getLongitude(){return longitude;}
+	public int getHealth(){return health;}
+	public int getDamage(){return damage;}
+	public int getRange(){return range;}
+	public int getMovement(){return movement;}
+    public boolean isEnemy(){return isEnemy;}
+	public int getXLoc(){return xLoc;}
+    public int getYLoc(){return yLoc;}
+    public double getLatitude(){return latitude;}
+    public double getLongitude(){return longitude;}
+    public String getName(){return name;}
 
     //setters - setting location and enemy status
-    private void setXLoc(int x){this.xLoc = x;}
-    private void setYLoc(int y){this .yLoc = y;}
-    private void SetIsEnemy(boolean status){this.isEnemy = status;}
+    public void setXLoc(int x){this.xLoc = x;}
+    public void setYLoc(int y){this .yLoc = y;}
+    public void SetIsEnemy(boolean status){this.isEnemy = status;}
 
     //modifiers - for Decreasing health when needed and potential dmg mods
 	private void modHealth(int modifier){this.health += modifier;}
@@ -165,10 +179,10 @@ public class Knight
     //location set - sets the latitude and longitude for google maps
     public void setMapLocation()
     {
-        double minLong = -81.1935;
-        double maxLong = -81.1938;
-        double minLat = 28.5962;
-        double maxLat = 28.60618;
+        double minLong = -81.1960;
+        double maxLong = -81.2040;
+        double minLat = 28.59900;
+        double maxLat = 28.60500;
 
         double rand = new Random().nextDouble();
         double latitude = minLat + (rand*(maxLat-minLat));
@@ -177,6 +191,10 @@ public class Knight
 
         this.latitude = latitude;
         this.longitude = longitude;
+
+
     }
+
+
 
 }

@@ -1,20 +1,31 @@
 package com.ucf.knightgo;
 
 import android.content.Intent;
-import android.support.v4.app.FragmentActivity;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentActivity;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.util.ArrayList;
+import java.util.Random;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
+    private final double x = 28.6024274;
+    private final double y = -81.2000599;
+    private final LatLng ucfLocation = new LatLng(x, y);
+    private final int knightsNumber = 10;
+    public ArrayList<Knight> Inventory = new ArrayList<>();
+    private ArrayList<Knight> knightList   = new ArrayList<Knight>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +36,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+
     }
 
 
@@ -42,8 +55,47 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         // Add a marker in ucf and move the camera
-        LatLng ucf = new LatLng(28.6024274, -81.2000599);
-        //mMap.addMarker(new MarkerOptions().position(ucf).title("Marker in ucf"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ucf, 15));
+        //mMap.addMarker(new MarkerOptions().position(ucfLocation).title("Marker in ucf"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ucfLocation, 15));
+
+        //THIS IS SUPPOSED TO SHOW A CURRENT LOCATION BUTTON
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+                ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mMap.setMyLocationEnabled(true);
+        }
+
+        //create random markers so we can put objects there.
+        CreateKnights();
+
+
     }
+    public void CreateKnights(){;
+        Random r = new Random();
+        int knightType = 0;
+        for(int i = 0 ;i < knightsNumber ; i++){
+            // just until 8 cuz we want only 1 pegasus to be available.
+            knightType = r.nextInt(8);
+            Knight newKnight = new Knight(knightType);
+            knightList.add(newKnight);
+            newKnight.setMapLocation();
+            double latitude = newKnight.getLatitude();
+            double longitude = newKnight.getLongitude();
+
+            mMap.addMarker(new MarkerOptions().position(new LatLng(latitude,longitude)).title(newKnight.getName()));
+
+        }
+        //Adding the only Pegasus
+        Knight newKnight = new Knight(9);
+        knightList.add(newKnight);
+        newKnight.setMapLocation();
+        double latitude = newKnight.getLatitude();
+        double longitude = newKnight.getLongitude();
+        mMap.addMarker(new MarkerOptions().position(new LatLng(latitude,longitude)).title(newKnight.getName()));
+
+
+
+
+}
+
+
 }
