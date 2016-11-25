@@ -39,14 +39,14 @@ public class MyCurrentLocation implements GoogleApiClient.ConnectionCallbacks, G
         mGoogleApiClient.connect();
     }
 
-    public void stop(){
-        mGoogleApiClient.disconnect();
-    }
+    public void stop(){ mGoogleApiClient.disconnect(); }
+
     @Override
     public void onConnected(Bundle bundle) {
+
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
-                mGoogleApiClient);
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+
         if (mLastLocation != null) {
             onLocationChangedListener.onLocationChanged(mLastLocation);
         }
@@ -59,13 +59,15 @@ public class MyCurrentLocation implements GoogleApiClient.ConnectionCallbacks, G
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
+
         Log.e("MyApp", "Location services connection failed with code " + connectionResult.getErrorCode());
     }
 
     @Override
     public void onLocationChanged(Location location) {
-        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
-                mGoogleApiClient);
+
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+
         if (mLastLocation != null) {
             onLocationChangedListener.onLocationChanged(mLastLocation);
         }
