@@ -5,8 +5,10 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.Manifest;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -17,20 +19,22 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 import java.util.Random;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
-    private GoogleMap mMap;
+    private static GoogleMap mMap;
     private final double x = 28.6024274;
     private final double y = -81.2000599;
     private final LatLng ucfLocation = new LatLng(x, y);
     private final int knightsNumber = 10;
     public ArrayList<Knight> Inventory = new ArrayList<>();
-    private ArrayList<Knight> knightList   = new ArrayList<Knight>();
+    public static ArrayList<Knight> knightList  = new ArrayList<Knight>();
+    public static ArrayList<MarkerOptions> markerList = new ArrayList<>();
 
 
     @Override
@@ -50,8 +54,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
      * If Google Play services is not installed on the device, the user will be prompted to install
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
@@ -65,22 +67,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ucfLocation, 15));
 
         //THIS IS SUPPOSED TO SHOW A CURRENT LOCATION BUTTON
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
-                ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
             mMap.setMyLocationEnabled(true);
+            Context context = getApplicationContext();
+            Toast see = Toast.makeText(context,"Hey we see you!", Toast.LENGTH_LONG);
+            see.show();
+        } else {
+            // Show rationale and request permission.
         }
-
         //WELCOME!
         WelcomeMessage();
-        //create random markers so we can put objects there.
-        CreateKnights();
-        //picking up knights.
-        PickUpKnights();
 
+        //create random markers so we can put objects there.
+        if(knightList.size() < 10)
+            CreateKnights();
+
+        DisplayKnights();
 
     }
 
-    public void CreateKnights(){;
+    public void DisplayKnights(){
+        for(int i = 0; i < markerList.size();i++)
+        mMap.addMarker(markerList.get(i));
+    }
+    public void CreateKnights(){
         Random r = new Random();
         int knightType = 0;
         LatLng knightLoc = ucfLocation;
@@ -89,6 +100,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             knightType = r.nextInt(8);
 
             Knight newKnight = new Knight(knightType);
+            MarkerOptions knightMarker;
 
             newKnight.setMapLocation();
 
@@ -97,10 +109,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             knightLoc = new LatLng(latitude,longitude);
             newKnight.setLocation(knightLoc);
             //create the marker
-            mMap.addMarker(new MarkerOptions()
+            knightMarker = new MarkerOptions()
                     .position(knightLoc)
                     .title(newKnight.getName())
-                    .icon(BitmapDescriptorFactory.fromResource(newKnight.getMapIcon())));
+                    .icon(BitmapDescriptorFactory.fromResource(newKnight.getMapIcon()));
 
             // lets add a circle around each mark. so when we are near the circle, we can pick them up.
             Circle circle = mMap.addCircle(new CircleOptions().center(knightLoc).radius(40).strokeColor(Color.RED));
@@ -109,6 +121,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             //at the very end we at them to our Array list to keep track of what is that we have created!
             knightList.add(newKnight);
+            markerList.add(knightMarker);
 
         }
         //Adding the only Pegasus
@@ -118,18 +131,38 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         double longitude = newKnight.getLongitude();
         knightLoc = new LatLng(latitude,longitude);
         newKnight.setLocation(knightLoc);
-        mMap.addMarker(new MarkerOptions().position(knightLoc).title(newKnight.getName()));
+        mMap.addMarker(new MarkerOptions()
+                .position(knightLoc)
+                .title(newKnight.getName())
+                .icon(BitmapDescriptorFactory.fromResource(newKnight.getMapIcon())));
         Circle circle = mMap.addCircle(new CircleOptions().center(knightLoc).radius(40).strokeColor(Color.RED));
         //circle.setVisible(false);
         circle.setClickable(true);
         knightList.add(newKnight);
 
 }
+    @Override
+    public boolean onMarkerClick(final Marker marker) {
+
+        String name= marker.getTitle();
+        Context context = getApplicationContext();
+        Toast welcome = Toast.makeText(context,"Clicked!", Toast.LENGTH_LONG);
+        welcome.show();
+        marker.remove();
+        if (name.equalsIgnoreCase("My Spot"))
+        {
+
+            //write your code here
+        }
+        return true;
+    }
+
     private void WelcomeMessage(){
         Context context = getApplicationContext();
         Toast welcome = Toast.makeText(context,"Welcome! Start picking up knights", Toast.LENGTH_LONG);
         welcome.show();
-    };
+    }
+
     private void PickUpKnights(){
 
     }
