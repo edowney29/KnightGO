@@ -1,4 +1,6 @@
 package com.ucf.knightgo;
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.Random;
 
 public class Knight {
@@ -121,13 +123,14 @@ public class Knight {
     }
 
     // extra constructor
-    Knight(String name, int health, int damage, int range, int movement)
+    Knight(String name, int health, int damage, int range, int movement, LatLng location)
     {
         this.name = name;
         this.health = health;
         this.damage = damage;
         this.range = range;
         this.movement = movement;
+        this.location = location;
     }
 
 	private int health;
@@ -142,6 +145,7 @@ public class Knight {
 
     private double latitude;
     private double longitude;
+    public LatLng location = new LatLng(latitude,longitude);
 
 	//getters
 	public int getHealth(){return health;}
@@ -154,11 +158,13 @@ public class Knight {
     public double getLatitude(){return latitude;}
     public double getLongitude(){return longitude;}
     public String getName(){return name;}
+    public LatLng getLocation(){return location;}
 
     //setters - setting location and enemy status
     public void setXLoc(int x){this.xLoc = x;}
     public void setYLoc(int y){this .yLoc = y;}
     public void SetIsEnemy(boolean status){this.isEnemy = status;}
+    public void setLocation(LatLng x){this.location = x;}
 
     //modifiers - for Decreasing health when needed and potential dmg mods
 	private void modHealth(int modifier){this.health += modifier;}
