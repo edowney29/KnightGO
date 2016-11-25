@@ -13,6 +13,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
@@ -96,7 +97,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             knightLoc = new LatLng(latitude,longitude);
             newKnight.setLocation(knightLoc);
             //create the marker
-            mMap.addMarker(new MarkerOptions().position(knightLoc).title(newKnight.getName()));
+            mMap.addMarker(new MarkerOptions()
+                    .position(knightLoc)
+                    .title(newKnight.getName())
+                    .icon(BitmapDescriptorFactory.fromResource(newKnight.getMapIcon())));
 
             // lets add a circle around each mark. so when we are near the circle, we can pick them up.
             Circle circle = mMap.addCircle(new CircleOptions().center(knightLoc).radius(40).strokeColor(Color.RED));

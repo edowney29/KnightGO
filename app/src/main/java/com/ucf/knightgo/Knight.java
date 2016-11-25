@@ -1,4 +1,5 @@
 package com.ucf.knightgo;
+
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Random;
@@ -19,6 +20,8 @@ public class Knight {
                 this.damage =   1;
                 this.range =    1;
                 this.movement = 1;
+                this.mapIcon = R.drawable.map_shield;
+                this.bigIcon = R.drawable.shield;
                 break;
             }
 
@@ -29,6 +32,8 @@ public class Knight {
                 this.damage =   3;
                 this.range =    3;
                 this.movement = 1;
+                this.mapIcon = R.drawable.map_longbow;
+                this.bigIcon = R.drawable.longbow;
                 break;
             }
 
@@ -39,6 +44,8 @@ public class Knight {
                 this.damage =   2;
                 this.range =    2;
                 this.movement = 2;
+                this.mapIcon = R.drawable.map_crossbow;
+                this.bigIcon = R.drawable.crossbow;
                 break;
             }
 
@@ -49,6 +56,8 @@ public class Knight {
                 this.damage =   3;
                 this.range =    2;
                 this.movement = 1;
+                this.mapIcon = R.drawable.map_spear;
+                this.bigIcon = R.drawable.spear;
                 break;
             }
 
@@ -59,6 +68,8 @@ public class Knight {
                 this.damage =   2;
                 this.range =    2;
                 this.movement = 2;
+                this.mapIcon = R.drawable.map_sword;
+                this.bigIcon = R.drawable.sword;
                 break;
             }
 
@@ -69,6 +80,8 @@ public class Knight {
                 this.damage =   4;
                 this.range =    1;
                 this.movement = 1;
+                this.mapIcon = R.drawable.map_axe;
+                this.bigIcon = R.drawable.axe;
                 break;
             }
 
@@ -79,6 +92,8 @@ public class Knight {
                 this.damage =   3;
                 this.range =    1;
                 this.movement = 1;
+                this.mapIcon = R.drawable.map_mace;
+                this.bigIcon = R.drawable.mace;
                 break;
             }
 
@@ -89,6 +104,8 @@ public class Knight {
                 this.damage =   6;
                 this.range =    1;
                 this.movement = 2;
+                this.mapIcon = R.drawable.map_dagger;
+                this.bigIcon = R.drawable.dagger;
                 break;
             }
 
@@ -99,6 +116,8 @@ public class Knight {
                 this.damage =   4;
                 this.range =    1;
                 this.movement = 1;
+                this.mapIcon = R.drawable.map_halberd;
+                this.bigIcon = R.drawable.halberd;
                 break;
             }
 
@@ -109,6 +128,8 @@ public class Knight {
                 this.damage =   5;
                 this.range =    1;
                 this.movement = 3;
+                this.mapIcon = R.drawable.map_pegasus;
+                this.bigIcon = R.drawable.pegasus;
                 break;
             }
 
@@ -118,6 +139,8 @@ public class Knight {
                 this.damage =   1;
                 this.range =    1;
                 this.movement = 1;
+                this.mapIcon = R.drawable.map_sword;
+                this.bigIcon = R.drawable.sword;
                 break;
         }
     }
@@ -137,7 +160,10 @@ public class Knight {
 	private int damage;
 	private int range;
 	private int movement;
+    private int mapIcon;
+    private int bigIcon;
     private String name;
+
 
     private boolean isEnemy;
     private int xLoc;
@@ -152,6 +178,8 @@ public class Knight {
 	public int getDamage(){return damage;}
 	public int getRange(){return range;}
 	public int getMovement(){return movement;}
+    public int getMapIcon(){return mapIcon;}
+    public int getBigIcon(){return bigIcon;}
     public boolean isEnemy(){return isEnemy;}
 	public int getXLoc(){return xLoc;}
     public int getYLoc(){return yLoc;}
@@ -159,6 +187,7 @@ public class Knight {
     public double getLongitude(){return longitude;}
     public String getName(){return name;}
     public LatLng getLocation(){return location;}
+
 
     //setters - setting location and enemy status
     public void setXLoc(int x){this.xLoc = x;}

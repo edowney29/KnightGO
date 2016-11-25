@@ -37,7 +37,6 @@
         android:background="@drawable/sword"
         android:visibility="invisible"
         android:onClick="printLOL"
-        android:layout_marginTop="95dp"
         android:elevation="0dp"
         android:layout_above="@+id/shadow"
         android:layout_centerHorizontal="true" />
