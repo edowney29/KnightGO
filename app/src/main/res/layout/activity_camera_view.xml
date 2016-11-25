@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:src="@drawable/ic_launcher"
+        android:src="@drawable/arrow"
         android:background="#FFFFFF"
         android:text="Large Text" />
 
@@ -24,8 +24,8 @@
         android:id="@+id/ImageButton01"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_launcher"
-        android:background="@drawable/ic_launcher"
+        android:src="@drawable/arrow"
+        android:background="@drawable/arrow"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
         android:visibility="invisible"

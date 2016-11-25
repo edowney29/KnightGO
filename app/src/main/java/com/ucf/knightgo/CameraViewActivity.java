@@ -1,6 +1,7 @@
 package com.ucf.knightgo;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
@@ -27,7 +28,7 @@ public class CameraViewActivity extends Activity implements
 	private AugmentedPOI mPoi;
 
 	private double mAzimuthReal = 0;
-	private double mAzimuthTeoretical = 0;
+	private double mAzimuthTheoretical = 0;
 	private static double AZIMUTH_ACCURACY = 10;
 	private double mMyLatitude = 0;
 	private double mMyLongitude = 0;
@@ -36,14 +37,14 @@ public class CameraViewActivity extends Activity implements
 	private MyCurrentLocation myCurrentLocation;
 
 	TextView descriptionTextView;
-	ImageButton pointerIcon;
+	ImageButton knightIcon;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_camera_view);
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
+        knightIcon.setImageResource(R.drawable.sword);
 		setupListeners();
 		setupLayout();
 		setAugmentedRealityPoint();
@@ -58,7 +59,7 @@ public class CameraViewActivity extends Activity implements
 		);
 	}
 
-	public double calculateTeoreticalAzimuth() {
+	public double calculateTheoreticalAzimuth() {
 		double dX = mPoi.getPoiLatitude() - mMyLatitude;
 		double dY = mPoi.getPoiLongitude() - mMyLongitude;
 
@@ -114,7 +115,7 @@ public class CameraViewActivity extends Activity implements
 
 	private void updateDescription() {
 		descriptionTextView.setText(mPoi.getPoiName() + " azimuthTeoretical "
-				+ mAzimuthTeoretical + " azimuthReal " + mAzimuthReal + " latitude "
+				+ mAzimuthTheoretical + " azimuthReal " + mAzimuthReal + " latitude "
 				+ mMyLatitude + " longitude " + mMyLongitude);
 	}
 
@@ -122,7 +123,7 @@ public class CameraViewActivity extends Activity implements
 	public void onLocationChanged(Location location) {
 		mMyLatitude = location.getLatitude();
 		mMyLongitude = location.getLongitude();
-		mAzimuthTeoretical = calculateTeoreticalAzimuth();
+		mAzimuthTheoretical = calculateTheoreticalAzimuth();
 		Toast.makeText(this,"latitude: "+location.getLatitude()+" longitude: "+location.getLongitude(), Toast.LENGTH_SHORT).show();
 		updateDescription();
 	}
@@ -130,17 +131,17 @@ public class CameraViewActivity extends Activity implements
 	@Override
 	public void onAzimuthChanged(float azimuthChangedFrom, float azimuthChangedTo) {
 		mAzimuthReal = azimuthChangedTo;
-		mAzimuthTeoretical = calculateTeoreticalAzimuth();
+		mAzimuthTheoretical = calculateTheoreticalAzimuth();
 
-		pointerIcon = (ImageButton) findViewById(R.id.ImageButton01);
+        knightIcon = (ImageButton) findViewById(R.id.ImageButton01);
 
-		double minAngle = calculateAzimuthAccuracy(mAzimuthTeoretical).get(0);
-		double maxAngle = calculateAzimuthAccuracy(mAzimuthTeoretical).get(1);
+		double minAngle = calculateAzimuthAccuracy(mAzimuthTheoretical).get(0);
+		double maxAngle = calculateAzimuthAccuracy(mAzimuthTheoretical).get(1);
 
 		if (isBetween(minAngle, maxAngle, mAzimuthReal)) {
-			pointerIcon.setVisibility(View.VISIBLE);
+            knightIcon.setVisibility(View.VISIBLE);
 		} else {
-			pointerIcon.setVisibility(View.INVISIBLE);
+            knightIcon.setVisibility(View.INVISIBLE);
 		}
 
 		updateDescription();
@@ -214,6 +215,8 @@ public class CameraViewActivity extends Activity implements
 
     public void printLOL(View view)
     {
-        descriptionTextView.setText("LOL");
+		Context context = getApplicationContext();
+		Toast welcome = Toast.makeText(context,"Knight captured", Toast.LENGTH_LONG);
+		welcome.show();
     }
 }
