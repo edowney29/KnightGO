@@ -209,7 +209,9 @@ public class Knight {
     //TODO: Finish attack
     //attacking - special attacks switch with basic as default
 	public void attack(Knight attacker, Knight[][] board)
-	{}
+	{
+
+    }
 
     //location set - sets the latitude and longitude for google maps
     public void setMapLocation()
@@ -226,10 +228,5 @@ public class Knight {
 
         this.latitude = latitude;
         this.longitude = longitude;
-
-
     }
-
-
-
 }

@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.content.Intent;
 
-public class mainmenu extends AppCompatActivity {
+public class MainMenu extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +25,7 @@ public class mainmenu extends AppCompatActivity {
 
     public void openTutorial(View view)
     {
-        Intent intent = new Intent(this, tutorialActivity.class);
+        Intent intent = new Intent(this, TutorialActivity.class);
         //EditText editText = (EditText) findViewById(R.id.edit_message);
         //String message = editText.getText().toString();
         //intent.putExtra(EXTRA_MESSAGE, message);
