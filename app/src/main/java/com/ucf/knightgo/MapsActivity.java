@@ -1,15 +1,20 @@
 package com.ucf.knightgo;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -64,38 +69,66 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.setMyLocationEnabled(true);
         }
 
+        //WELCOME!
+        WelcomeMessage();
         //create random markers so we can put objects there.
         CreateKnights();
+        //picking up knights.
+        PickUpKnights();
 
 
     }
+
     public void CreateKnights(){;
         Random r = new Random();
         int knightType = 0;
+        LatLng knightLoc = ucfLocation;
         for(int i = 0 ;i < knightsNumber ; i++){
-            // just until 8 cuz we want only 1 pegasus to be available.
+            // just until 8 because we want only 1 pegasus to be available.
             knightType = r.nextInt(8);
+
             Knight newKnight = new Knight(knightType);
-            knightList.add(newKnight);
+
             newKnight.setMapLocation();
+
             double latitude = newKnight.getLatitude();
             double longitude = newKnight.getLongitude();
+            knightLoc = new LatLng(latitude,longitude);
+            newKnight.setLocation(knightLoc);
+            //create the marker
+            mMap.addMarker(new MarkerOptions().position(knightLoc).title(newKnight.getName()));
 
-            mMap.addMarker(new MarkerOptions().position(new LatLng(latitude,longitude)).title(newKnight.getName()));
+            // lets add a circle around each mark. so when we are near the circle, we can pick them up.
+            Circle circle = mMap.addCircle(new CircleOptions().center(knightLoc).radius(40).strokeColor(Color.RED));
+            circle.setVisible(false);
+            circle.setClickable(true);
+
+            //at the very end we at them to our Array list to keep track of what is that we have created!
+            knightList.add(newKnight);
 
         }
         //Adding the only Pegasus
         Knight newKnight = new Knight(9);
-        knightList.add(newKnight);
         newKnight.setMapLocation();
         double latitude = newKnight.getLatitude();
         double longitude = newKnight.getLongitude();
-        mMap.addMarker(new MarkerOptions().position(new LatLng(latitude,longitude)).title(newKnight.getName()));
-
-
-
+        knightLoc = new LatLng(latitude,longitude);
+        newKnight.setLocation(knightLoc);
+        mMap.addMarker(new MarkerOptions().position(knightLoc).title(newKnight.getName()));
+        Circle circle = mMap.addCircle(new CircleOptions().center(knightLoc).radius(40).strokeColor(Color.RED));
+        //circle.setVisible(false);
+        circle.setClickable(true);
+        knightList.add(newKnight);
 
 }
+    private void WelcomeMessage(){
+        Context context = getApplicationContext();
+        Toast welcome = Toast.makeText(context,"Welcome! Start picking up knights", Toast.LENGTH_LONG);
+        welcome.show();
+    };
+    private void PickUpKnights(){
+
+    }
 
 
 }
