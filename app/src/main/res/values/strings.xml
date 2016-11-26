@@ -1,4 +1,8 @@
 <resources>
-    <string name="app_name">knightgo</string>
+    <string name="app_name">Knight GO</string>
     <string name="title_activity_maps">Map</string>
+    <string name="dialog_no_bluetooth">No Bluetooth adapter detected.</string>
+    <string name="okay">Okay</string>
+    <string name="battle_start">Find a Battleground</string>
+    <string name="battle_wait">Host a Battleground</string>
 </resources>

@@ -8,6 +8,8 @@
          location permissions for the 'MyLocation' functionality. 
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
     <application
         android:allowBackup="true"
@@ -15,7 +17,9 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.ucf.knightgo.mainmenu">
+        <activity
+            android:name=".mainmenu"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -28,9 +32,14 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name="com.ucf.knightgo.MapsActivity"
+            android:name=".MapsActivity"
             android:label="@string/title_activity_maps" />
-        <activity android:name="com.ucf.knightgo.tutorialActivity"></activity>
+        <activity
+            android:name=".tutorialActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".BluetoothActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>
