@@ -1,7 +1,6 @@
 package com.ucf.knightgo;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.PixelFormat;
@@ -17,12 +16,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.app.ActivityCompat;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import android.content.Intent;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -44,6 +44,8 @@ public class CameraViewActivity extends Activity implements
 	private static double AZIMUTH_ACCURACY = 10;
 	private double mMyLatitude = 0;
 	private double mMyLongitude = 0;
+    private double knightLat = 0;
+    private double knightLong = 0;
 
 	private MyCurrentAzimuth myCurrentAzimuth;
 	private Location myCurrentLocation;
@@ -70,6 +72,10 @@ public class CameraViewActivity extends Activity implements
                     .build();
         }
 
+		Intent intent = getIntent();
+        knightLat = intent.getDoubleExtra("lat",0);
+        knightLong = intent.getDoubleExtra("long",0);
+
 		setupListeners();
 		setupLayout();
 		setAugmentedRealityPoint();
@@ -79,8 +85,8 @@ public class CameraViewActivity extends Activity implements
 		mPoi = new AugmentedPOI(
 				"Test",
 				"Description",
-				30.6239751,
-				-86.1956334
+				knightLat,
+				knightLong
 		);
 	}
 
@@ -149,9 +155,10 @@ public class CameraViewActivity extends Activity implements
 
     @Override
     public void onConnected(Bundle bundle) {
-        if ( ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
+        if ( ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION ) == PackageManager.PERMISSION_GRANTED ) {
             myCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         }
+
         startLocationUpdates();
     }
 
@@ -171,7 +178,7 @@ public class CameraViewActivity extends Activity implements
 
     @Override
     public void onLocationChanged(Location location) {
-        if ( ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
+        if ( ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION ) == PackageManager.PERMISSION_GRANTED ) {
             myCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         }
         mAzimuthTheoretical = calculateTheoreticalAzimuth();
@@ -194,7 +201,7 @@ public class CameraViewActivity extends Activity implements
 		mAzimuthReal = azimuthChangedTo;
 		mAzimuthTheoretical = calculateTheoreticalAzimuth();
 
-        knightIcon = (ImageButton) findViewById(R.id.ImageButton01);
+        knightIcon = (ImageButton) findViewById(R.id.iconButton);
         shadow = (ImageView) findViewById(R.id.shadow);
 
 		double minAngle = calculateAzimuthAccuracy(mAzimuthTheoretical).get(0);
@@ -275,10 +282,11 @@ public class CameraViewActivity extends Activity implements
 		isCameraviewOn = false;
 	}
 
-    public void printLOL(View view)
+    // When the knight button is pressed, return to map activity
+    public void captureKnight(View view)
     {
-		Context context = getApplicationContext();
-		Toast welcome = Toast.makeText(context,"Knight captured", Toast.LENGTH_LONG);
-		welcome.show();
+        Intent intent = new Intent(this, MapsActivity.class);
+        setResult(1,intent);
+        finish();
     }
 }

@@ -32,7 +32,9 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile 'com.android.support:appcompat-v7:24.2.1'
-    compile 'com.google.android.gms:play-services:9.8.0'
+    compile 'com.google.android.gms:play-services-identity:9.8.0'
+    compile 'com.google.android.gms:play-services-maps:9.8.0'
     compile 'com.android.support:multidex:1.0.1'
+    compile 'james.a.grant:wagon:1.1.0'
     testCompile 'junit:junit:4.12'
 }

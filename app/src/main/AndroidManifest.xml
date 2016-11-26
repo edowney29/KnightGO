@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.ucf.knightgo">
+    package="com.ucf.knightgo"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
@@ -13,6 +14,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.BLUETOOTH"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-sdk tools:overrideLibrary="james.a.grant.wagon"/>
 
     <application
         android:allowBackup="true"
@@ -37,6 +39,7 @@
         <activity
             android:name="com.ucf.knightgo.MapsActivity"
             android:label="@string/title_activity_maps" />
+        <activity android:name="com.ucf.knightgo.CameraViewActivity"></activity>
         <activity android:name="com.ucf.knightgo.TutorialActivity"></activity><!-- ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
         <meta-data

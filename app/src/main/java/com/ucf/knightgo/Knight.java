@@ -15,6 +15,7 @@ public class Knight {
         {
             case 0://SHIELD
             {
+                this.type = 0;
                 this.name = "Shield";
                 this.health =   10;
                 this.damage =   1;
@@ -27,6 +28,7 @@ public class Knight {
 
             case 1://BOW
             {
+                this.type = 1;
                 this.name = "Bow";
                 this.health =   1;
                 this.damage =   3;
@@ -39,6 +41,7 @@ public class Knight {
 
             case 2://CROSSBOW
             {
+                this.type = 2;
                 this.name = "Crossbow";
                 this.health =   2;
                 this.damage =   2;
@@ -51,6 +54,7 @@ public class Knight {
 
             case 3://SPEAR
             {
+                this.type = 3;
                 this.name = "Spear";
                 this.health =   4;
                 this.damage =   3;
@@ -63,6 +67,7 @@ public class Knight {
 
             case 4://SWORD
             {
+                this.type = 4;
                 this.name = "Sword";
                 this.health =   3;
                 this.damage =   2;
@@ -75,6 +80,7 @@ public class Knight {
 
             case 5://AXE
             {
+                this.type = 5;
                 this.name = "Axe";
                 this.health =   5;
                 this.damage =   4;
@@ -87,6 +93,7 @@ public class Knight {
 
             case 6://MACE
             {
+                this.type = 6;
                 this.name = "Mace";
                 this.health =   6;
                 this.damage =   3;
@@ -99,9 +106,10 @@ public class Knight {
 
             case 7://DAGGER
             {
+                this.type = 7;
                 this.name = "Dagger";
                 this.health =   1;
-                this.damage =   6;
+                this.damage =   3;
                 this.range =    1;
                 this.movement = 2;
                 this.mapIcon = R.drawable.map_dagger;
@@ -111,6 +119,7 @@ public class Knight {
 
             case 8://HALBERD
             {
+                this.type = 8;
                 this.name = "Halberd";
                 this.health =   7;
                 this.damage =   4;
@@ -123,6 +132,7 @@ public class Knight {
 
             case 9://PEGASUS
             {
+                this.type = 9;
                 this.name = "Pegasus";
                 this.health =   5;
                 this.damage =   5;
@@ -156,6 +166,7 @@ public class Knight {
         this.location = location;
     }
 
+    private int type;
 	private int health;
 	private int damage;
 	private int range;
@@ -174,6 +185,7 @@ public class Knight {
     public LatLng location = new LatLng(latitude,longitude);
 
 	//getters
+    public int getType(){return type;}
 	public int getHealth(){return health;}
 	public int getDamage(){return damage;}
 	public int getRange(){return range;}

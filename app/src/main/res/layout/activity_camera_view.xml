@@ -24,19 +24,19 @@
         android:src="@drawable/shadow"
         android:id="@+id/shadow"
         android:layout_above="@+id/cameraTextView"
-        android:layout_alignStart="@+id/ImageButton01"
+        android:layout_alignStart="@+id/iconButton"
         android:adjustViewBounds="false"
         android:cropToPadding="false"
         android:layout_height="wrap_content" />
 
     <ImageButton
-        android:id="@+id/ImageButton01"
+        android:id="@+id/iconButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/sword"
         android:background="@drawable/sword"
         android:visibility="invisible"
-        android:onClick="printLOL"
+        android:onClick="captureKnight"
         android:elevation="0dp"
         android:layout_above="@+id/shadow"
         android:layout_centerHorizontal="true" />
