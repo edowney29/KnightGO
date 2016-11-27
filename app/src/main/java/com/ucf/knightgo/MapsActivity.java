@@ -78,8 +78,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         //THIS IS SUPPOSED TO SHOW A CURRENT LOCATION BUTTON
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(this,
-                    Manifest.permission.ACCESS_FINE_LOCATION)
+            if (ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) {
                 mMap.setMyLocationEnabled(true);
                 buildGoogleApiClient();
@@ -88,7 +87,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 see.show();
             } else {
                 checkLocationPermission();
-                // Show rationale and request permission.
             }
         }
 
