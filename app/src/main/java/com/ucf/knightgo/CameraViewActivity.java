@@ -444,7 +444,7 @@ public class CameraViewActivity extends Activity implements
                     // Permission denied, boo! Disable the
                     // functionality that depends on this permission.
                 }
-                
+
                 return;
             }
         }

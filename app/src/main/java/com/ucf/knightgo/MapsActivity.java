@@ -33,6 +33,8 @@ import com.google.android.gms.common.ConnectionResult;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
@@ -51,6 +53,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Marker mCurrLocationMarker;
     private Marker curMarker;
     private Knight curKnight;
+    private Timer timer;
+    private TimerTask timerTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,7 +136,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             offCampus.show();
         }
 
-
         // Place current location marker
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         MarkerOptions markerOptions = new MarkerOptions();
@@ -189,8 +192,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             // At the very end we at them to our Array list to keep track of what is that we have created
             knightList.add(newKnight);
             markerList.add(knightMarker);
-
         }
+
         // Adding the only Pegasus
         Knight newKnight = new Knight(9);
         newKnight.setMapLocation();
@@ -207,8 +210,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         circle.setClickable(true);
         knightList.add(newKnight);
         markerList.add(knightMarker);
+    }
 
-}
     @Override
     public boolean onMarkerClick(final Marker marker) {
         Knight selectedKnight= (Knight)marker.getTag();
@@ -247,7 +250,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onResume(){
+
         super.onResume();
+        // TODO: timer goes here
     }
 
     private void WelcomeMessage(){
