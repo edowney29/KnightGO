@@ -233,10 +233,9 @@ public class Knight {
         double minLat = 28.59900;
         double maxLat = 28.60500;
 
-        double rand = new Random().nextDouble();
-        double latitude = minLat + (rand*(maxLat-minLat));
-        rand = new Random().nextDouble();
-        double longitude = minLong + (rand*(maxLong-minLong));
+        Random rand = new Random();
+        double latitude = minLat + (rand.nextDouble()*(maxLat-minLat));
+        double longitude = minLong + (rand.nextDouble()*(maxLong-minLong));
 
         this.latitude = latitude;
         this.longitude = longitude;
