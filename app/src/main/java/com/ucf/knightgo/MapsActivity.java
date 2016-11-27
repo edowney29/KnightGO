@@ -38,9 +38,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     private static GoogleMap mMap;
-    private final double x = 28.6024274;
-    private final double y = -81.2000599;
-    private final LatLng ucfLocation = new LatLng(x, y);
+    private final Location ucfCampus = new Location("UCF Campus");
     private final int knightsNumber = 10;
     public int[] Inventory = new int[10];
     public static ArrayList<Knight> knightList  = new ArrayList<Knight>();
@@ -60,6 +58,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
+        ucfCampus.setLatitude(28.6024274);
+        ucfCampus.setLongitude(-81.2000599);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -72,31 +72,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
         mMap.setOnMarkerClickListener(this);
 
-        // Add a marker in ucf and move the camera
-        //mMap.addMarker(new MarkerOptions().position(ucfLocation).title("Marker in ucf"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ucfLocation, 15));
-
-        //THIS IS SUPPOSED TO SHOW A CURRENT LOCATION BUTTON
+        // Shows current location button
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(this,
-                    Manifest.permission.ACCESS_FINE_LOCATION)
+            if (ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) {
                 mMap.setMyLocationEnabled(true);
                 buildGoogleApiClient();
-                Context context = getApplicationContext();
-                Toast see = Toast.makeText(context, "Hey we see you!", Toast.LENGTH_LONG);
-                see.show();
             } else {
                 checkLocationPermission();
-                // Show rationale and request permission.
             }
         }
-
         //Welcome message on 1st visit of activity.
         if(knightList.size()== 0)
         WelcomeMessage();
 
-        //create random markers so we can put objects there.
+        //Generate knights.
         if(knightList.size() < 2)
             CreateKnights();
 
@@ -140,13 +130,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mCurrLocationMarker.remove();
         }
 
+        if(mLastLocation.distanceTo(ucfCampus) > 5000)
+        {
+            Context context = getApplicationContext();
+            Toast offCampus = Toast.makeText(context,"Travel to the UCF Campus to find Knights", Toast.LENGTH_LONG);
+            offCampus.show();
+        }
+
+
         //Place current location marker
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
-        markerOptions.title("Current Position");
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
-        mCurrLocationMarker = mMap.addMarker(markerOptions);
+//        markerOptions.title("Current Position");
+//        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+//        mCurrLocationMarker = mMap.addMarker(markerOptions);
 
         //move map camera
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
@@ -171,7 +169,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void CreateKnights(){
         Random r = new Random();
         int knightType = 0;
-        LatLng knightLoc = ucfLocation;
+        LatLng knightLoc;
         MarkerOptions knightMarker;
         for(int i = 0 ;i < knightsNumber ; i++){
             // just until 8 because we want only 1 pegasus to be available.
