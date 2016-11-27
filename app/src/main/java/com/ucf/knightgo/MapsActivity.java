@@ -125,8 +125,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onConnectionFailed(ConnectionResult connectionResult) {}
 
     @Override
-    public void onLocationChanged(Location location)
-    {
+    public void onLocationChanged(Location location) {
         mLastLocation = location;
 
         if(mLastLocation.distanceTo(ucfCampus) > 5000)
@@ -228,8 +227,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     @Override
-    protected void onActivityResult(int aRequestCode, int aResultCode, Intent aData)
-    {
+    protected void onActivityResult(int aRequestCode, int aResultCode, Intent aData) {
         if(aRequestCode == 1)
         {
             // If cameraActivity returned a 1, the knight was captured

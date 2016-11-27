@@ -9,8 +9,8 @@ public class Knight {
     /* Under the assumption knightList will be a freq. array,
     the value representing the quantity and index representing type
     (Ex: knightList[1] = 3; means the player has three bowman)*/
-    public Knight(int type)
-    {
+    public Knight(int type) {
+
         switch(type)
         {
             case 0://SHIELD
@@ -156,8 +156,8 @@ public class Knight {
     }
 
     // Extra constructor
-    Knight(String name, int health, int damage, int range, int movement, LatLng location)
-    {
+    Knight(String name, int health, int damage, int range, int movement, LatLng location) {
+
         this.name = name;
         this.health = health;
         this.damage = damage;
@@ -211,21 +211,20 @@ public class Knight {
 
     //TODO: Finish move
     //moving - will move forward until hitting another unit(?)
-    public Knight[][] move(Knight knight, Knight[][] board)
-    {
+    public Knight[][] move(Knight knight, Knight[][] board) {
+
         return null;
     }
 
     //TODO: Finish attack
     //attacking - special attacks switch with basic as default
-	public void attack(Knight attacker, Knight[][] board)
-	{
+	public void attack(Knight attacker, Knight[][] board) {
 
     }
 
     //location set - sets the latitude and longitude for google maps
-    public void setMapLocation()
-    {
+    public void setMapLocation() {
+
         double minLong = -81.1960;
         double maxLong = -81.2040;
         double minLat = 28.59900;

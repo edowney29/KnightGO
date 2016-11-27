@@ -247,6 +247,7 @@ public class CameraViewActivity extends Activity implements
                 != PackageManager.PERMISSION_GRANTED) {
             mCamera = Camera.open();
         }
+
         else
         {
             checkCameraPermission();
@@ -319,8 +320,7 @@ public class CameraViewActivity extends Activity implements
 	}
 
     // When the knight button is pressed, return to map activity
-    public void captureKnight(View view)
-    {
+    public void captureKnight(View view) {
         Intent intent = new Intent(this, MapsActivity.class);
         setResult(1,intent);
         finish();
@@ -328,6 +328,7 @@ public class CameraViewActivity extends Activity implements
 
     public static final int MY_PERMISSIONS_REQUEST_CAMERA = 1;
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 2;
+
     private void checkCameraPermission() {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.CAMERA)
