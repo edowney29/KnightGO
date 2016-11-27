@@ -43,7 +43,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static GoogleMap mMap;
     private final Location ucfCampus = new Location("UCF Campus");
     private final int knightsNumber = 10;
-    public int[] Inventory = new int[10];
     public static ArrayList<Knight> knightList  = new ArrayList<Knight>();
     public static ArrayList<MarkerOptions> markerList = new ArrayList<>();
     public static ArrayList<Marker> knightMarkers = new ArrayList<>();
@@ -151,6 +150,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void DisplayKnights(){
+        knightMarkers.clear();
         for(int i = 0; i < markerList.size();i++) {
             knightMarkers.add(mMap.addMarker(markerList.get(i)));
             knightMarkers.get(i).setTag(knightList.get(i));
@@ -226,6 +226,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return true;
     }
 
+
+    // Called when Camera activity returns
     @Override
     protected void onActivityResult(int aRequestCode, int aResultCode, Intent aData) {
         if(aRequestCode == 1)
@@ -240,7 +242,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 knightMarkers.remove(curMarker);
                 markerList.clear();
                 curMarker.remove();
-                DisplayKnights();
             }
             DisplayKnights();
         }
@@ -257,10 +258,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Context context = getApplicationContext();
         Toast welcome = Toast.makeText(context,"Welcome! Start picking up knights", Toast.LENGTH_LONG);
         welcome.show();
-    }
-
-    private void PickUpKnights(){
-
     }
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
