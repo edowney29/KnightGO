@@ -33,7 +33,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class CameraViewActivity extends Activity implements
 		SurfaceHolder.Callback, OnLocationChangedListener, OnAzimuthChangedListener, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener{
@@ -80,7 +79,6 @@ public class CameraViewActivity extends Activity implements
         knightLat = intent.getDoubleExtra("lat",0);
         knightLong = intent.getDoubleExtra("long",0);
         iconRef = intent.getIntExtra("icon",0);
-
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION)
@@ -173,7 +171,6 @@ public class CameraViewActivity extends Activity implements
         }
 	}
 
-
     @Override
     public void onConnected(Bundle bundle) {
         mLocationRequest = new LocationRequest();
@@ -195,6 +192,7 @@ public class CameraViewActivity extends Activity implements
         Toast.makeText(this,"latitude: "+myCurrentLocation.getLatitude()+" longitude: "+myCurrentLocation.getLongitude(), Toast.LENGTH_SHORT).show();
         updateDescription();
     }
+
     @Override
     public void onConnectionSuspended(int i) {
 
@@ -204,7 +202,6 @@ public class CameraViewActivity extends Activity implements
     public void onConnectionFailed(ConnectionResult connectionResult) {
         Log.e("MyApp", "Location services connection failed with code " + connectionResult.getErrorCode());
     }
-
 
 	@Override
 	public void onAzimuthChanged(float azimuthChangedFrom, float azimuthChangedTo) {
@@ -227,9 +224,7 @@ public class CameraViewActivity extends Activity implements
 		} else {
             knightIcon.setVisibility(View.INVISIBLE);
             shadow.setVisibility(View.INVISIBLE);
-
         }
-
 	}
 
 	@Override
@@ -252,6 +247,7 @@ public class CameraViewActivity extends Activity implements
                 != PackageManager.PERMISSION_GRANTED) {
             mCamera = Camera.open();
         }
+
         else
         {
             checkCameraPermission();
@@ -324,16 +320,15 @@ public class CameraViewActivity extends Activity implements
 	}
 
     // When the knight button is pressed, return to map activity
-    public void captureKnight(View view)
-    {
+    public void captureKnight(View view) {
         Intent intent = new Intent(this, MapsActivity.class);
         setResult(1,intent);
         finish();
     }
 
-
     public static final int MY_PERMISSIONS_REQUEST_CAMERA = 1;
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 2;
+
     private void checkCameraPermission() {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.CAMERA)
@@ -419,7 +414,7 @@ public class CameraViewActivity extends Activity implements
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                    // permission was granted, yay! Do the
+                    // Permission was granted, yay! Do the
                     // camera task you need to do.
                     if (ContextCompat.checkSelfPermission(this,
                             Manifest.permission.CAMERA)
@@ -430,7 +425,7 @@ public class CameraViewActivity extends Activity implements
 
                 } else {
 
-                    // permission denied, boo! Disable the
+                    // Permission denied, boo! Disable the
                     // functionality that depends on this permission.
                     Toast.makeText(this, "permission denied :(", Toast.LENGTH_LONG).show();
                 }
@@ -441,18 +436,18 @@ public class CameraViewActivity extends Activity implements
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                    // permission was granted, yay! Do the
+                    // Permission was granted, yay! Do the
                     // location task you need to do.
                     myCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(
                             mGoogleApiClient);
                 } else {
 
-                    // permission denied, boo! Disable the
+                    // Permission denied, boo! Disable the
                     // functionality that depends on this permission.
                 }
+
                 return;
             }
-
         }
     }
 }
