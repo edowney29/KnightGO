@@ -1,6 +1,10 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        config {
+        }
+    }
     compileSdkVersion 24
     buildToolsVersion "24.0.2"
     defaultConfig {
@@ -32,5 +36,6 @@ dependencies {
     compile 'com.google.android.gms:play-services-maps:9.8.0'
     compile 'com.google.android.gms:play-services-location:9.8.0'
     compile 'com.android.support:multidex:1.0.1'
+    compile 'james.a.grant:wagon:1.1.0'
     testCompile 'junit:junit:4.12'
 }

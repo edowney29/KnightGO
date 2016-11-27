@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <SurfaceView
+        android:id="@+id/cameraview"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+
+
+    <TextView
+        android:id="@+id/cameraTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:background="#FFFFFF"
+        android:text="Large Text" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:src="@drawable/shadow"
+        android:id="@+id/shadow"
+        android:layout_above="@+id/cameraTextView"
+        android:layout_alignStart="@+id/iconButton"
+        android:adjustViewBounds="false"
+        android:cropToPadding="false"
+        android:layout_height="wrap_content" />
+
+    <ImageButton
+        android:id="@+id/iconButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/sword"
+        android:background="@drawable/sword"
+        android:visibility="invisible"
+        android:onClick="captureKnight"
+        android:elevation="0dp"
+        android:layout_above="@+id/shadow"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>
