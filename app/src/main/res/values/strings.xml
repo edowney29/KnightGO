@@ -5,4 +5,17 @@
     <string name="okay">Okay</string>
     <string name="battle_start">Find a Battleground</string>
     <string name="battle_wait">Host a Battleground</string>
+    <string name="title_activity_formation">FormationActivity</string>
+    <string-array name="knight_types">
+        <item>Shield</item>
+        <item>Bow</item>
+        <item>Crossbow</item>
+        <item>Spear</item>
+        <item>Sword</item>
+        <item>Axe</item>
+        <item>Mace</item>
+        <item>Dagger</item>
+        <item>Halberd</item>
+        <item>Pegasus</item>
+    </string-array>
 </resources>
