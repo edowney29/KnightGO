@@ -52,8 +52,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Marker curMarker;
     private Knight curKnight;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,7 +59,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         ucfCampus.setLatitude(28.6024274);
         ucfCampus.setLongitude(-81.2000599);
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -82,17 +80,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 checkLocationPermission();
             }
         }
-        //Welcome message on 1st visit of activity.
+        // Welcome message on 1st visit of activity
         if(knightList.size()== 0)
             WelcomeMessage();
 
-        //Generate knights.
+        // Generate knights
         if(markerList.size() < 2) {
             CreateKnights();
         }
 
         DisplayKnights();
-
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -136,16 +133,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
 
-        //Place current location marker
+        // Place current location marker
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
 
-        //move map camera
+        // Move map camera
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
 
-        //stop location updates
+        // Stop location updates
         if (mGoogleApiClient != null) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
         }
@@ -159,19 +156,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Context context = getApplicationContext();
         Toast welcome = Toast.makeText(context,"Knights left " + knightMarkers.size(), Toast.LENGTH_LONG);
         welcome.show();
-
     }
+
     public void CreateKnights(){
         Random r = new Random();
         int knightType = 0;
         LatLng knightLoc;
         MarkerOptions knightMarker;
         for(int i = 0 ;i < knightsNumber ; i++){
-            // just until 8 because we want only 1 pegasus to be available.
+            // Just until 8 because we want only 1 pegasus to be available
             knightType = r.nextInt(8);
 
             Knight newKnight = new Knight(knightType);
-
 
             newKnight.setMapLocation();
 
@@ -179,23 +175,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             double longitude = newKnight.getLongitude();
             knightLoc = new LatLng(latitude,longitude);
             newKnight.setLocation(knightLoc);
-            //create the marker
+            // Create the marker
             knightMarker = new MarkerOptions()
                     .position(knightLoc)
                     .title(newKnight.getName())
                     .icon(BitmapDescriptorFactory.fromResource(newKnight.getMapIcon()));
 
-            // lets add a circle around each mark. so when we are near the circle, we can pick them up.
+            // Lets add a circle around each mark. so when we are near the circle, we can pick them up
             Circle circle = mMap.addCircle(new CircleOptions().center(knightLoc).radius(40).strokeColor(Color.RED));
             circle.setVisible(false);
             circle.setClickable(true);
 
-            //at the very end we at them to our Array list to keep track of what is that we have created!
+            // At the very end we at them to our Array list to keep track of what is that we have created
             knightList.add(newKnight);
             markerList.add(knightMarker);
 
         }
-        //Adding the only Pegasus
+        // Adding the only Pegasus
         Knight newKnight = new Knight(9);
         newKnight.setMapLocation();
         double latitude = newKnight.getLatitude();
@@ -247,14 +243,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
             DisplayKnights();
         }
-
     }
 
     @Override
     public void onResume(){
         super.onResume();
-
     }
+
     private void WelcomeMessage(){
         Context context = getApplicationContext();
         Toast welcome = Toast.makeText(context,"Welcome! Start picking up knights", Toast.LENGTH_LONG);
@@ -264,7 +259,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void PickUpKnights(){
 
     }
-
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private void checkLocationPermission() {
@@ -293,7 +287,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         .create()
                         .show();
 
-
             } else {
                 // No explanation needed, we can request the permission.
                 ActivityCompat.requestPermissions(this,
@@ -312,7 +305,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                    // permission was granted, yay! Do the
+                    // Permission was granted, yay! Do the
                     // location-related task you need to do.
                     if (ContextCompat.checkSelfPermission(this,
                             Manifest.permission.ACCESS_FINE_LOCATION)
@@ -326,7 +319,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 } else {
 
-                    // permission denied, boo! Disable the
+                    // Permission denied, boo! Disable the
                     // functionality that depends on this permission.
                     Toast.makeText(this, "permission denied", Toast.LENGTH_LONG).show();
                 }
