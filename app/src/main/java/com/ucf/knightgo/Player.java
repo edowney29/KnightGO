@@ -4,10 +4,11 @@ public class Player {
     private static Player mInstance = null;
 
     private String mString;
-    public int[] Inventory = new int[10];
+    public int[] Inventory;
 
     private Player(){
         mString = "Hello";
+        Inventory = new int[10];
     }
 
     public static Player getInstance(){
