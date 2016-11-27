@@ -37,6 +37,7 @@ import java.util.Random;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
+    public int inventorySize = 0;
     private static GoogleMap mMap;
     private final Location ucfCampus = new Location("UCF Campus");
     private final int knightsNumber = 10;
@@ -64,7 +65,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
     }
 
     @Override
@@ -84,11 +84,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         //Welcome message on 1st visit of activity.
         if(knightList.size()== 0)
-        WelcomeMessage();
+            WelcomeMessage();
 
         //Generate knights.
-        if(knightList.size() < 2)
+        if(markerList.size() < 2) {
             CreateKnights();
+        }
 
         DisplayKnights();
 
@@ -126,9 +127,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onLocationChanged(Location location)
     {
         mLastLocation = location;
-        if (mCurrLocationMarker != null) {
-            mCurrLocationMarker.remove();
-        }
 
         if(mLastLocation.distanceTo(ucfCampus) > 5000)
         {
@@ -142,9 +140,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
-//        markerOptions.title("Current Position");
-//        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
-//        mCurrLocationMarker = mMap.addMarker(markerOptions);
 
         //move map camera
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
@@ -224,6 +219,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         curKnight = selectedKnight;
         curMarker = marker;
         Intent intent = new Intent(this, CameraViewActivity.class);
+        intent.putExtra("icon",selectedKnight.getBigIcon());
         intent.putExtra("lat",selectedKnight.getLatitude());
         intent.putExtra("long",selectedKnight.getLongitude());
 
@@ -242,13 +238,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             {
                 // Add knight to inventory and delete marker
                 Inventory[curKnight.getType()]+=1;
+                inventorySize++;
                 knightList.remove(curKnight);
                 knightMarkers.remove(curMarker);
                 markerList.clear();
                 curMarker.remove();
+                DisplayKnights();
             }
             DisplayKnights();
         }
+
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
 
     }
     private void WelcomeMessage(){

@@ -1,12 +1,17 @@
 package com.ucf.knightgo;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -39,6 +44,7 @@ public class CameraViewActivity extends Activity implements
 	private AugmentedPOI mPoi;
     private LocationRequest mLocationRequest;
 
+    private int iconRef;
 	private double mAzimuthReal = 0;
 	private double mAzimuthTheoretical = 0;
 	private static double AZIMUTH_ACCURACY = 10;
@@ -49,7 +55,6 @@ public class CameraViewActivity extends Activity implements
 
 	private MyCurrentAzimuth myCurrentAzimuth;
 	private Location myCurrentLocation;
-    protected Location mLastLocation;
 
 	TextView descriptionTextView;
 	ImageButton knightIcon;
@@ -61,7 +66,6 @@ public class CameraViewActivity extends Activity implements
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_camera_view);
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        knightIcon.setImageResource(R.drawable.sword);
 
         // Create an instance of GoogleAPIClient.
         if (mGoogleApiClient == null) {
@@ -75,10 +79,21 @@ public class CameraViewActivity extends Activity implements
 		Intent intent = getIntent();
         knightLat = intent.getDoubleExtra("lat",0);
         knightLong = intent.getDoubleExtra("long",0);
+        iconRef = intent.getIntExtra("icon",0);
 
-		setupListeners();
-		setupLayout();
-		setAugmentedRealityPoint();
+
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) {
+                myCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+
+            } else {
+                checkLocationPermission();
+            }
+        }
+        setupListeners();
+        setupLayout();
+        setAugmentedRealityPoint();
 	}
 
 	private void setAugmentedRealityPoint() {
@@ -145,42 +160,37 @@ public class CameraViewActivity extends Activity implements
 	}
 
 	private void updateDescription() {
-		descriptionTextView.setText(mPoi.getPoiName() + " azimuthTeoretical "
-				+ mAzimuthTheoretical + " azimuthReal " + mAzimuthReal + " latitude "
-				+ mMyLatitude + " longitude " + mMyLongitude);
+        if(myCurrentLocation == null) {
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                myCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+                descriptionTextView.setText(mPoi.getPoiName() + " azimuthTeoretical "
+                        + mAzimuthTheoretical + " azimuthReal " + mAzimuthReal + " latitude "
+                        + myCurrentLocation.getLatitude() + " longitude " + myCurrentLocation.getLongitude());
+            }
+        }
+        else {
+            descriptionTextView.setText(":(((");
+        }
 	}
-
-
 
 
     @Override
     public void onConnected(Bundle bundle) {
-        if ( ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION ) == PackageManager.PERMISSION_GRANTED ) {
-            myCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        }
-
-        startLocationUpdates();
-    }
-
-    // Trigger new location updates at interval
-    protected void startLocationUpdates() {
-        // Create the location request
-        mLocationRequest = LocationRequest.create()
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(10000)
-                .setFastestInterval(5000);
-        // Request location updates
-        if ( ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
-            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
-                    mLocationRequest, this);
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(1000);
+        mLocationRequest.setFastestInterval(1000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
         }
     }
 
     @Override
     public void onLocationChanged(Location location) {
-        if ( ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION ) == PackageManager.PERMISSION_GRANTED ) {
-            myCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        }
+        myCurrentLocation = location;
+
         mAzimuthTheoretical = calculateTheoreticalAzimuth();
         Toast.makeText(this,"latitude: "+myCurrentLocation.getLatitude()+" longitude: "+myCurrentLocation.getLongitude(), Toast.LENGTH_SHORT).show();
         updateDescription();
@@ -202,7 +212,10 @@ public class CameraViewActivity extends Activity implements
 		mAzimuthTheoretical = calculateTheoreticalAzimuth();
 
         knightIcon = (ImageButton) findViewById(R.id.iconButton);
+        knightIcon.setImageResource(iconRef);
+
         shadow = (ImageView) findViewById(R.id.shadow);
+        shadow.setVisibility(View.INVISIBLE);
 
 		double minAngle = calculateAzimuthAccuracy(mAzimuthTheoretical).get(0);
 		double maxAngle = calculateAzimuthAccuracy(mAzimuthTheoretical).get(1);
@@ -217,11 +230,16 @@ public class CameraViewActivity extends Activity implements
 
         }
 
-		updateDescription();
 	}
 
 	@Override
 	protected void onStop() {
+        if (mCamera != null)
+        {
+            mCamera.stopPreview();
+            mCamera.release();
+            mCamera = null;
+        }
 		myCurrentAzimuth.stop();
 		super.onStop();
 	}
@@ -229,12 +247,19 @@ public class CameraViewActivity extends Activity implements
 	@Override
 	protected void onResume() {
 		super.onResume();
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            mCamera = Camera.open();
+        }
+        else
+        {
+            checkCameraPermission();
+        }
 		myCurrentAzimuth.start();
 	}
 
 	private void setupListeners() {
-
-
 		myCurrentAzimuth = new MyCurrentAzimuth(this, this);
 		myCurrentAzimuth.start();
 	}
@@ -244,6 +269,7 @@ public class CameraViewActivity extends Activity implements
 
 		getWindow().setFormat(PixelFormat.UNKNOWN);
 		SurfaceView surfaceView = (SurfaceView) findViewById(R.id.cameraview);
+
 		mSurfaceHolder = surfaceView.getHolder();
 		mSurfaceHolder.addCallback(this);
 		mSurfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
@@ -270,15 +296,30 @@ public class CameraViewActivity extends Activity implements
 
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
-		mCamera = Camera.open();
-		mCamera.setDisplayOrientation(90);
+        if(mCamera != null)
+        {
+            mCamera.release();
+        }
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.CAMERA)
+                == PackageManager.PERMISSION_GRANTED) {
+            mCamera = Camera.open();
+            mCamera.setDisplayOrientation(90);
+        }
+        else
+        {
+            checkCameraPermission();
+        }
 	}
 
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
-		mCamera.stopPreview();
-		mCamera.release();
-		mCamera = null;
+        if (mCamera != null)
+        {
+            mCamera.stopPreview();
+            mCamera.release();
+            mCamera = null;
+        }
 		isCameraviewOn = false;
 	}
 
@@ -288,5 +329,130 @@ public class CameraViewActivity extends Activity implements
         Intent intent = new Intent(this, MapsActivity.class);
         setResult(1,intent);
         finish();
+    }
+
+
+    public static final int MY_PERMISSIONS_REQUEST_CAMERA = 1;
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 2;
+    private void checkCameraPermission() {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.CAMERA)) {
+
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+                new AlertDialog.Builder(this)
+                        .setTitle("Camera Permission Needed")
+                        .setMessage("This app needs the Camera permission, please accept to use location functionality")
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                //Prompt the user once explanation has been shown
+                                ActivityCompat.requestPermissions(CameraViewActivity.this,
+                                        new String[]{Manifest.permission.CAMERA},
+                                        MY_PERMISSIONS_REQUEST_CAMERA );
+                            }
+                        })
+                        .create()
+                        .show();
+            } else {
+
+                // No explanation needed, we can request the permission.
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.CAMERA},
+                        MY_PERMISSIONS_REQUEST_CAMERA);
+
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        }
+    }
+
+    private void checkLocationPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+                new AlertDialog.Builder(this)
+                        .setTitle("Location Permission Needed")
+                        .setMessage("This app needs the Location permission, please accept to use location functionality")
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                //Prompt the user once explanation has been shown
+                                ActivityCompat.requestPermissions(CameraViewActivity.this,
+                                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                                        MY_PERMISSIONS_REQUEST_LOCATION );
+                            }
+                        })
+                        .create()
+                        .show();
+
+
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_LOCATION );
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_CAMERA: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // camera task you need to do.
+                    if (ContextCompat.checkSelfPermission(this,
+                            Manifest.permission.CAMERA)
+                            == PackageManager.PERMISSION_GRANTED) {
+                        mCamera = Camera.open();
+                        mCamera.setDisplayOrientation(90);
+                    }
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    Toast.makeText(this, "permission denied :(", Toast.LENGTH_LONG).show();
+                }
+                return;
+            }
+            case MY_PERMISSIONS_REQUEST_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // location task you need to do.
+                    myCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(
+                            mGoogleApiClient);
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+
+        }
     }
 }
