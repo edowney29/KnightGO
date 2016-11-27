@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.ucf.knightgo"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.ucf.knightgo">
+
+    <uses-sdk tools:overrideLibrary="james.a.grant.wagon" />
 
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
@@ -11,22 +13,20 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-sdk tools:overrideLibrary="james.a.grant.wagon"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
+        android:name="android.support.multidex.MultiDexApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:name="android.support.multidex.MultiDexApplication" >
-
+        android:theme="@style/AppTheme">
         <activity
-            android:name="com.ucf.knightgo.MainMenu"
+            android:name=".MainMenu"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -40,25 +40,28 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name="com.ucf.knightgo.BluetoothActivity"
-            android:screenOrientation="portrait"/>
-
+            android:name=".BluetoothActivity"
+            android:screenOrientation="portrait" />
         <activity
-            android:name="com.ucf.knightgo.MapsActivity"
+            android:name=".MapsActivity"
             android:label="@string/title_activity_maps" />
-
         <activity
-            android:name="com.ucf.knightgo.CameraViewActivity"
-            android:screenOrientation="portrait"/>
-
+            android:name=".CameraViewActivity"
+            android:screenOrientation="portrait" />
         <activity
-            android:name="com.ucf.knightgo.TutorialActivity"
-            android:screenOrientation="portrait"/>
+            android:name=".TutorialActivity"
+            android:screenOrientation="portrait" />
 
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
+        <activity
+            android:name=".SimulationActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".FormationActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>
