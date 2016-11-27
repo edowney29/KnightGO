@@ -112,7 +112,7 @@ public class BluetoothActivity extends AppCompatActivity {
         }
     };
 
-    /** Called when the user presses the "Start a Battle" button */
+    // Called when the user presses the "Start a Battle" button
     public void searchButton(View view) {
         registerReceiver(discoveryResult, new IntentFilter(BluetoothDevice.ACTION_FOUND));
         blueAdapter.startDiscovery();
@@ -126,7 +126,7 @@ public class BluetoothActivity extends AppCompatActivity {
         waiting.start();
     }
 
-    /** Begins battle formation. Called when a Bluetooth connection has been made. */
+    // Begins battle formation. Called when a Bluetooth connection has been made.
     public void openFormation() {
         Intent intent = new Intent(this, FormationActivity.class);
         intent.putExtra(CONNECTION_TYPE, connectAs);
@@ -167,7 +167,7 @@ public class BluetoothActivity extends AppCompatActivity {
             }
         }
 
-        /** Will cancel the listening socket, and cause the thread to finish */
+        // Will cancel the listening socket, and cause the thread to finish
         public void cancel() {
             try {
                 serverSocket.close();
