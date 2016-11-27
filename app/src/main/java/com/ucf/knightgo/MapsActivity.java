@@ -237,7 +237,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             if(aResultCode == 1)
             {
                 // Add knight to inventory and delete marker
-                Inventory[curKnight.getType()]+=1;
+                Player.getInstance().addKnight(curKnight.getType());
                 inventorySize++;
                 knightList.remove(curKnight);
                 knightMarkers.remove(curMarker);
