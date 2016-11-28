@@ -12,6 +12,7 @@ public class MyCurrentAzimuth implements SensorEventListener {
     private Sensor sensor;
     private int azimuthFrom = 0;
     private int azimuthTo = 0;
+    float[] smoothVal;
     private OnAzimuthChangedListener mAzimuthListener;
     Context mContext;
 
@@ -39,10 +40,13 @@ public class MyCurrentAzimuth implements SensorEventListener {
     @Override
     public void onSensorChanged(SensorEvent event) {
         azimuthFrom = azimuthTo;
+        smoothVal = new float[event.values.length];
+        if (event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR)
+             smoothVal = lowPass(event.values.clone(), smoothVal);
 
         float[] orientation = new float[3];
         float[] rMat = new float[9];
-        SensorManager.getRotationMatrixFromVector(rMat, event.values);
+        SensorManager.getRotationMatrixFromVector(rMat, smoothVal);
         azimuthTo = (int) ( Math.toDegrees( SensorManager.getOrientation( rMat, orientation )[0] ) + 360 ) % 360;
 
         mAzimuthListener.onAzimuthChanged(azimuthFrom, azimuthTo);
@@ -51,5 +55,15 @@ public class MyCurrentAzimuth implements SensorEventListener {
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
+    }
+    static final float smooth = 1.04f;
+
+    protected float[] lowPass( float[] input, float[] output ) {
+        if ( output == null ) return input;
+
+        for (int i=0; i < input.length; i++ ) {
+            output[i] = output[i] + (input[i] - output[i])/smooth;
+        }
+        return output;
     }
 }
