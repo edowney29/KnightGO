@@ -23,13 +23,12 @@
     <uses-sdk tools:overrideLibrary="james.a.grant.wagon"/>
 
     <application
+        android:name="android.support.multidex.MultiDexApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:name="android.support.multidex.MultiDexApplication" >
-
+        android:theme="@style/AppTheme">
         <activity
             android:name="com.ucf.knightgo.MainMenu"
             android:screenOrientation="portrait">
@@ -50,7 +49,7 @@
 
         <activity
             android:name="com.ucf.knightgo.MapsActivity"
-            android:label="@string/title_activity_maps" />
+            android:label="@string/title_activity_maps"/>
 
         <activity
             android:name="com.ucf.knightgo.CameraViewActivity"
@@ -61,7 +60,11 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name="com.ucf.knightgo.FormationActivity"
+            android:name=".SimulationActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".FormationActivity"
             android:screenOrientation="portrait"
             android:exported="true"/>
 

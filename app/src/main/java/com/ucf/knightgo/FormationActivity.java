@@ -13,6 +13,7 @@ import android.content.Intent;
 public class FormationActivity extends AppCompatActivity
 {
     //final Intent intent = new Intent(this, SimulationActivity.class);
+    public static final String FORMATION = "com.ucf.knightgo.Formation";
 
     //add the image-changing functionality
     public void setSpinListener(Spinner spin, final ImageView img)
