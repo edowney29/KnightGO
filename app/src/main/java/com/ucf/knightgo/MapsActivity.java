@@ -40,16 +40,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     public int inventorySize = 0;
+    private int pickupRange = 75;
     private static GoogleMap mMap;
+
     private final Location ucfCampus = new Location("UCF Campus");
-    private final int knightsNumber = 10;
-    public static ArrayList<Knight> knightList  = new ArrayList<Knight>();
-    public static ArrayList<MarkerOptions> markerList = new ArrayList<>();
+    private final int knightsNumber = 30;
+    public static ArrayList<Knight> knightList  = new ArrayList<>();
     public static ArrayList<Marker> knightMarkers = new ArrayList<>();
     GoogleApiClient mGoogleApiClient;
     LocationRequest mLocationRequest;
+    private LatLng ucfLocation;
     Location mLastLocation;
-    Marker mCurrLocationMarker;
+    Circle circle;
+    private MarkerOptions knightMarker;
     private Marker curMarker;
     private Knight curKnight;
     private Timer timer;
@@ -62,6 +65,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         ucfCampus.setLatitude(28.6024274);
         ucfCampus.setLongitude(-81.2000599);
+        ucfLocation = new LatLng(28.6024274,-81.2000599);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -83,16 +87,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 checkLocationPermission();
             }
         }
+
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ucfLocation, 15));
+
         // Welcome message on 1st visit of activity
-        if(knightList.size()== 0)
+        if(inventorySize == 0)
             WelcomeMessage();
 
         // Generate knights
-        if(markerList.size() < 2) {
+        if(knightList.size() == 0) {
             CreateKnights();
         }
 
         DisplayKnights();
+
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -106,10 +114,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onConnected(Bundle bundle) {
-        mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(1000);
-        mLocationRequest.setFastestInterval(1000);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        mLocationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(10 * 1000)        // 10 seconds, in milliseconds
+                .setFastestInterval(1 * 1000); // 1 second, in milliseconds
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -136,12 +144,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // Place current location marker
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(latLng);
+        circle.setCenter(latLng);
+        circle.setVisible(true);
 
         // Move map camera
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
+        //mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        //mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
 
         // Stop location updates
         if (mGoogleApiClient != null) {
@@ -149,25 +157,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    public void DisplayKnights(){
-        knightMarkers.clear();
-        for(int i = 0; i < markerList.size();i++) {
-            knightMarkers.add(mMap.addMarker(markerList.get(i)));
-            knightMarkers.get(i).setTag(knightList.get(i));
-        }
-        Context context = getApplicationContext();
-        Toast welcome = Toast.makeText(context,"Knights left " + knightMarkers.size(), Toast.LENGTH_LONG);
-        welcome.show();
-    }
+
 
     public void CreateKnights(){
         Random r = new Random();
         int knightType = 0;
         LatLng knightLoc;
-        MarkerOptions knightMarker;
         for(int i = 0 ;i < knightsNumber ; i++){
-            // Just until 8 because we want only 1 pegasus to be available
-            knightType = r.nextInt(8);
+
+            knightType = r.nextInt(10);
 
             Knight newKnight = new Knight(knightType);
 
@@ -183,47 +181,58 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .title(newKnight.getName())
                     .icon(BitmapDescriptorFactory.fromResource(newKnight.getMapIcon()));
 
-            // Lets add a circle around each mark. so when we are near the circle, we can pick them up
-            Circle circle = mMap.addCircle(new CircleOptions().center(knightLoc).radius(40).strokeColor(Color.RED));
-            circle.setVisible(false);
-            circle.setClickable(true);
-
             // At the very end we at them to our Array list to keep track of what is that we have created
             knightList.add(newKnight);
-            markerList.add(knightMarker);
         }
 
-        // Adding the only Pegasus
-        Knight newKnight = new Knight(9);
-        newKnight.setMapLocation();
-        double latitude = newKnight.getLatitude();
-        double longitude = newKnight.getLongitude();
-        knightLoc = new LatLng(latitude,longitude);
-        newKnight.setLocation(knightLoc);
-        knightMarker = new MarkerOptions()
-                .position(knightLoc)
-                .title(newKnight.getName())
-                .icon(BitmapDescriptorFactory.fromResource(newKnight.getMapIcon()));
-        Circle circle = mMap.addCircle(new CircleOptions().center(knightLoc).radius(40).strokeColor(Color.RED));
-        //circle.setVisible(false);
-        circle.setClickable(true);
-        knightList.add(newKnight);
-        markerList.add(knightMarker);
+    }
+    //create the markers and pickup range
+    public void DisplayKnights(){
+        //we clear the map and the array the army.
+        mMap.clear();
+        knightMarkers.clear();
+        circle = mMap.addCircle(new CircleOptions().center(ucfLocation).radius(pickupRange).strokeColor(Color.RED).visible(false));
+        for(int i = 0; i < knightList.size();i++) {
+            Knight mKnight = knightList.get(i);
+            knightMarker = new MarkerOptions()
+                    .position(mKnight.getLocation())
+                    .title(mKnight.getName())
+                    .icon(BitmapDescriptorFactory.fromResource(mKnight.getMapIcon()));
+            knightMarkers.add(mMap.addMarker(knightMarker));
+            knightMarkers.get(i).setTag(mKnight);
+        }
+
     }
 
+    // Runs when a marker is pressed
     @Override
     public boolean onMarkerClick(final Marker marker) {
+
         Knight selectedKnight= (Knight)marker.getTag();
         curKnight = selectedKnight;
         curMarker = marker;
-        Intent intent = new Intent(this, CameraViewActivity.class);
-        intent.putExtra("icon",selectedKnight.getBigIcon());
-        intent.putExtra("lat",selectedKnight.getLatitude());
-        intent.putExtra("long",selectedKnight.getLongitude());
 
-        startActivityForResult(intent,1);
+        Location knightLoc = new Location("Knight Location");
+        knightLoc.setLatitude(curKnight.getLatitude());
+        knightLoc.setLongitude(curKnight.getLongitude());
 
-        return true;
+        if(mLastLocation.distanceTo(knightLoc) <= pickupRange) {
+            Intent intent = new Intent(this, CameraViewActivity.class);
+            intent.putExtra("icon", selectedKnight.getBigIcon());
+            intent.putExtra("kLat", selectedKnight.getLatitude());
+            intent.putExtra("kLong", selectedKnight.getLongitude());
+            intent.putExtra("myLat", mLastLocation.getLatitude());
+            intent.putExtra("myLong", mLastLocation.getLongitude());
+
+            startActivityForResult(intent, 1);
+
+            return true;
+        }
+        else
+        {
+            outofRangeMessage();
+            return false;
+        }
     }
 
 
@@ -240,11 +249,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 inventorySize++;
                 knightList.remove(curKnight);
                 knightMarkers.remove(curMarker);
-                markerList.clear();
                 curMarker.remove();
+                DisplayKnights();
+                Context context = getApplicationContext();
+                Toast confirm = Toast.makeText(context,curKnight.getName() + " Knight has been added to your army", Toast.LENGTH_LONG);
+                confirm.show();
             }
-            DisplayKnights();
         }
+        DisplayKnights();
     }
 
     @Override
@@ -254,10 +266,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // TODO: timer goes here
     }
 
-    private void WelcomeMessage(){
+    private void outofRangeMessage(){
         Context context = getApplicationContext();
-        Toast welcome = Toast.makeText(context,"Welcome! Start picking up knights", Toast.LENGTH_LONG);
-        welcome.show();
+        Toast outRange = Toast.makeText(context,"Knight is out of range for collection", Toast.LENGTH_LONG);
+        outRange.show();
+    }
+    private void WelcomeMessage(){
+
     }
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
@@ -295,7 +310,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
     }
-
+    //request permition to access location
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {

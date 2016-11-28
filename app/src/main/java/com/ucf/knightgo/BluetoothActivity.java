@@ -4,6 +4,7 @@ package com.ucf.knightgo;
  * Created by KShoults on 11/23/2016.
  * Some code adapted from examples by Manoj Prasad.
  */
+
 import android.app.DialogFragment;
 import android.bluetooth.*;
 import android.content.BroadcastReceiver;
@@ -32,6 +33,8 @@ public class BluetoothActivity extends AppCompatActivity {
     public static BluetoothSocket socket;
     private ListView deviceList;
     private UUID uuid = UUID.fromString("8a0100f0-fce2-4c2c-8521-a90e4c2f1189");
+    private int connectAs;
+    public static final String CONNECTION_TYPE = "com.ucf.knightgo.ConnectionTypeBlue";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +88,8 @@ public class BluetoothActivity extends AppCompatActivity {
 
                     @Override
                     protected void onPostExecute(Void result) {
+                        // Labels this device as the client (attacker) for future Activities to use
+                        connectAs = 1;
                         openFormation();
                     }
                 };
@@ -123,8 +128,9 @@ public class BluetoothActivity extends AppCompatActivity {
 
     // Begins battle formation. Called when a Bluetooth connection has been made.
     public void openFormation() {
-        DialogFragment noBluetooth = new NoBluetoothDialogFragment();
-        noBluetooth.show(getFragmentManager(), "bluetooth");
+        Intent intent = new Intent(this, FormationActivity.class);
+        intent.putExtra(CONNECTION_TYPE, connectAs);
+        startActivity(intent);
     }
 
     private class AcceptThread extends Thread {
@@ -148,6 +154,9 @@ public class BluetoothActivity extends AppCompatActivity {
                     socket = serverSocket.accept();
                     if (socket != null) {
                         serverSocket.close();
+
+                        // Labels this device as the server (defender) for future Activities to use
+                        connectAs = 0;
                         openFormation();
                         break;
                     }
