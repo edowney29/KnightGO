@@ -44,14 +44,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private final Location ucfCampus = new Location("UCF Campus");
     private final int knightsNumber = 10;
-    public static ArrayList<Knight> knightList  = new ArrayList<Knight>();
+    public static ArrayList<Knight> knightList  = new ArrayList<>();
     public static ArrayList<MarkerOptions> markerList = new ArrayList<>();
     public static ArrayList<Marker> knightMarkers = new ArrayList<>();
     GoogleApiClient mGoogleApiClient;
     LocationRequest mLocationRequest;
     private LatLng ucfLocation;
     Location mLastLocation;
-    Marker mCurrLocationMarker;
+    Circle circle;
+
     private Marker curMarker;
     private Knight curKnight;
     private Timer timer;
@@ -88,12 +89,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ucfLocation, 15));
 
+        circle = mMap.addCircle(new CircleOptions().center(ucfLocation).radius(40).strokeColor(Color.RED).visible(false));
+
         // Welcome message on 1st visit of activity
         if(knightList.size()== 0)
             WelcomeMessage();
 
         // Generate knights
-        if(markerList.size() < 2) {
+        if(knightList.size() < 2) {
             CreateKnights();
         }
 
@@ -141,9 +144,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // Place current location marker
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(latLng);
 
+        circle.setCenter(latLng);
+        circle.setVisible(true);
         // Move map camera
         //mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         //mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
@@ -161,8 +164,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             knightMarkers.get(i).setTag(knightList.get(i));
         }
         Context context = getApplicationContext();
-        Toast welcome = Toast.makeText(context,"Knights left " + knightMarkers.size(), Toast.LENGTH_LONG);
-        welcome.show();
+        //Toast welcome = Toast.makeText(context,"Knights left " + knightMarkers.size(), Toast.LENGTH_LONG);
+        //welcome.show();
     }
 
     public void CreateKnights(){
@@ -188,11 +191,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .title(newKnight.getName())
                     .icon(BitmapDescriptorFactory.fromResource(newKnight.getMapIcon()));
 
-            // Lets add a circle around each mark. so when we are near the circle, we can pick them up
-            Circle circle = mMap.addCircle(new CircleOptions().center(knightLoc).radius(40).strokeColor(Color.RED));
-            circle.setVisible(false);
-            circle.setClickable(true);
-
             // At the very end we at them to our Array list to keep track of what is that we have created
             knightList.add(newKnight);
             markerList.add(knightMarker);
@@ -209,9 +207,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .position(knightLoc)
                 .title(newKnight.getName())
                 .icon(BitmapDescriptorFactory.fromResource(newKnight.getMapIcon()));
-        Circle circle = mMap.addCircle(new CircleOptions().center(knightLoc).radius(40).strokeColor(Color.RED));
-        //circle.setVisible(false);
-        circle.setClickable(true);
         knightList.add(newKnight);
         markerList.add(knightMarker);
     }

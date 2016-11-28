@@ -35,8 +35,8 @@ public class CameraViewActivity extends Activity implements
 
     private int iconRef;
 	private double mAzimuthReal = 0;
-	private double mAzimuthTheoretical = 0;
-	private static double AZIMUTH_ACCURACY = 50;
+	private double mAzimuthTarget = 0;
+	private static double AZIMUTH_ACCURACY = 25;
 	private double myLatitude = 0;
 	private double myLongitude = 0;
     private double knightLat = 0;
@@ -75,7 +75,7 @@ public class CameraViewActivity extends Activity implements
 		);
 	}
 
-	public double calculateTheoreticalAzimuth() {
+	public double calculateTargetAzimuth() {
 		double dX = mPoi.getPoiLatitude() - myLatitude;
 		double dY = mPoi.getPoiLongitude() - myLongitude;
 
@@ -87,7 +87,7 @@ public class CameraViewActivity extends Activity implements
 		phiAngle = Math.atan(tanPhi);
 		phiAngle = Math.toDegrees(phiAngle);
 
-		if (dX > 0 && dY > 0) { // I quater
+		if (dX > 0 && dY > 0) { // I quarter
 			return azimuth = phiAngle;
 		} else if (dX < 0 && dY > 0) { // II
 			return azimuth = 180 - phiAngle;
@@ -131,14 +131,14 @@ public class CameraViewActivity extends Activity implements
 
 	private void updateDescription() {
         descriptionTextView.setText(mPoi.getPoiName() + " azimuthTeoretical "
-                + mAzimuthTheoretical + " azimuthReal " + mAzimuthReal + " latitude "
+                + mAzimuthTarget + " azimuthReal " + mAzimuthReal + " latitude "
                 + myLatitude + " longitude " + myLongitude);
 	}
 
 	@Override
 	public void onAzimuthChanged(float azimuthChangedFrom, float azimuthChangedTo) {
 		mAzimuthReal = azimuthChangedTo;
-		mAzimuthTheoretical = calculateTheoreticalAzimuth();
+        mAzimuthTarget = calculateTargetAzimuth();
 
         knightIcon = (ImageButton) findViewById(R.id.iconButton);
         knightIcon.setImageResource(iconRef);
@@ -146,8 +146,8 @@ public class CameraViewActivity extends Activity implements
         shadow = (ImageView) findViewById(R.id.shadow);
         shadow.setVisibility(View.INVISIBLE);
 
-		double minAngle = calculateAzimuthAccuracy(mAzimuthTheoretical).get(0);
-		double maxAngle = calculateAzimuthAccuracy(mAzimuthTheoretical).get(1);
+		double minAngle = calculateAzimuthAccuracy(mAzimuthTarget).get(0);
+		double maxAngle = calculateAzimuthAccuracy(mAzimuthTarget).get(1);
 
 		if (isBetween(minAngle, maxAngle, mAzimuthReal)) {
             knightIcon.setVisibility(View.VISIBLE);
