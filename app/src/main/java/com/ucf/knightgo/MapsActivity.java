@@ -40,6 +40,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     public int inventorySize = 0;
+    private int pickupRange = 75;
     private static GoogleMap mMap;
 
     private final Location ucfCampus = new Location("UCF Campus");
@@ -86,9 +87,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 checkLocationPermission();
             }
         }
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ucfLocation, 15));
 
-        circle = mMap.addCircle(new CircleOptions().center(ucfLocation).radius(40).strokeColor(Color.RED).visible(false));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ucfLocation, 15));
 
         // Welcome message on 1st visit of activity
         if(inventorySize == 0)
@@ -100,6 +100,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
         DisplayKnights();
+
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -143,9 +144,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // Place current location marker
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-
         circle.setCenter(latLng);
         circle.setVisible(true);
+
         // Move map camera
         //mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         //mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
@@ -159,6 +160,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void DisplayKnights(){
         mMap.clear();
         knightMarkers.clear();
+        circle = mMap.addCircle(new CircleOptions().center(ucfLocation).radius(pickupRange).strokeColor(Color.RED).visible(false));
         for(int i = 0; i < knightList.size();i++) {
             Knight mKnight = knightList.get(i);
             knightMarker = new MarkerOptions()
@@ -214,20 +216,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     // Runs when a marker is pressed
     @Override
     public boolean onMarkerClick(final Marker marker) {
+
         Knight selectedKnight= (Knight)marker.getTag();
         curKnight = selectedKnight;
         curMarker = marker;
 
-        Intent intent = new Intent(this, CameraViewActivity.class);
-        intent.putExtra("icon",selectedKnight.getBigIcon());
-        intent.putExtra("kLat",selectedKnight.getLatitude());
-        intent.putExtra("kLong",selectedKnight.getLongitude());
-        intent.putExtra("myLat",mLastLocation.getLatitude());
-        intent.putExtra("myLong",mLastLocation.getLongitude());
+        Location knightLoc = new Location("Knight Location");
+        knightLoc.setLatitude(curKnight.getLatitude());
+        knightLoc.setLongitude(curKnight.getLongitude());
 
-        startActivityForResult(intent,1);
+        if(mLastLocation.distanceTo(knightLoc) <= pickupRange) {
+            Intent intent = new Intent(this, CameraViewActivity.class);
+            intent.putExtra("icon", selectedKnight.getBigIcon());
+            intent.putExtra("kLat", selectedKnight.getLatitude());
+            intent.putExtra("kLong", selectedKnight.getLongitude());
+            intent.putExtra("myLat", mLastLocation.getLatitude());
+            intent.putExtra("myLong", mLastLocation.getLongitude());
 
-        return true;
+            startActivityForResult(intent, 1);
+
+            return true;
+        }
+        else
+        {
+            outofRangeMessage();
+            return false;
+        }
     }
 
 
@@ -261,10 +275,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // TODO: timer goes here
     }
 
-    private void WelcomeMessage(){
+    private void outofRangeMessage(){
         Context context = getApplicationContext();
-        Toast welcome = Toast.makeText(context,"Welcome! Start picking up knights", Toast.LENGTH_LONG);
-        welcome.show();
+        Toast outRange = Toast.makeText(context,"Knight is out of range for collection", Toast.LENGTH_LONG);
+        outRange.show();
+    }
+    private void WelcomeMessage(){
+
     }
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
