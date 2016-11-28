@@ -91,11 +91,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         circle = mMap.addCircle(new CircleOptions().center(ucfLocation).radius(40).strokeColor(Color.RED).visible(false));
 
         // Welcome message on 1st visit of activity
-        if(knightList.size()== 0)
+        if(inventorySize == 0)
             WelcomeMessage();
 
         // Generate knights
-        if(knightList.size() < 2) {
+        if(knightList.size() == 0) {
             CreateKnights();
         }
 
