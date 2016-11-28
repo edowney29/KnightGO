@@ -14,7 +14,7 @@
         android:text="@string/okay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="goToMenu"
+        android:onClick="goToMainMenu"
         android:id="@+id/button_okay"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" />

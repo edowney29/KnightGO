@@ -15,25 +15,16 @@ public class MainMenu extends AppCompatActivity {
 
     public void openMap(View view) {
         Intent intent = new Intent(this, MapsActivity.class);
-        //EditText editText = (EditText) findViewById(R.id.edit_message);
-        //String message = editText.getText().toString();
-        //intent.putExtra(EXTRA_MESSAGE, message);
         startActivity(intent);
     }
 
     public void openTutorial(View view) {
         Intent intent = new Intent(this, TutorialActivity.class);
-        //EditText editText = (EditText) findViewById(R.id.edit_message);
-        //String message = editText.getText().toString();
-        //intent.putExtra(EXTRA_MESSAGE, message);
         startActivity(intent);
     }
 
     public void openBattle(View view) {
         Intent intent = new Intent(this, BluetoothActivity.class);
-        //EditText editText = (EditText) findViewById(R.id.edit_message);
-        //String message = editText.getText().toString();
-        //intent.putExtra(EXTRA_MESSAGE, message);
         startActivity(intent);
     }
 }
