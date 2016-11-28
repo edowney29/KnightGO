@@ -7,12 +7,9 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
-import android.location.Location;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -22,11 +19,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.support.v4.content.ContextCompat;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
 import android.content.Intent;
 
 import java.io.IOException;
@@ -34,31 +26,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CameraViewActivity extends Activity implements
-		SurfaceHolder.Callback, OnLocationChangedListener, OnAzimuthChangedListener, GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, LocationListener{
+		SurfaceHolder.Callback, OnAzimuthChangedListener{
 
 	private Camera mCamera;
 	private SurfaceHolder mSurfaceHolder;
 	private boolean isCameraviewOn = false;
 	private AugmentedPOI mPoi;
-    private LocationRequest mLocationRequest;
 
     private int iconRef;
 	private double mAzimuthReal = 0;
 	private double mAzimuthTheoretical = 0;
-	private static double AZIMUTH_ACCURACY = 10;
-	private double mMyLatitude = 0;
-	private double mMyLongitude = 0;
+	private static double AZIMUTH_ACCURACY = 50;
+	private double myLatitude = 0;
+	private double myLongitude = 0;
     private double knightLat = 0;
     private double knightLong = 0;
 
 	private MyCurrentAzimuth myCurrentAzimuth;
-	private Location myCurrentLocation;
 
 	TextView descriptionTextView;
 	ImageButton knightIcon;
     ImageView shadow;
-    GoogleApiClient mGoogleApiClient;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -66,29 +54,13 @@ public class CameraViewActivity extends Activity implements
 		setContentView(R.layout.activity_camera_view);
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        // Create an instance of GoogleAPIClient.
-        if (mGoogleApiClient == null) {
-            mGoogleApiClient = new GoogleApiClient.Builder(this)
-                    .addApi(LocationServices.API)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .build();
-        }
-
 		Intent intent = getIntent();
-        knightLat = intent.getDoubleExtra("lat",0);
-        knightLong = intent.getDoubleExtra("long",0);
+        knightLat = intent.getDoubleExtra("KLat",0);
+        knightLong = intent.getDoubleExtra("KLong",0);
+        myLatitude = intent.getDoubleExtra("myLat",0);
+        myLongitude = intent.getDoubleExtra("myLong",0);
         iconRef = intent.getIntExtra("icon",0);
 
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION)
-                    == PackageManager.PERMISSION_GRANTED) {
-                myCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-
-            } else {
-                checkLocationPermission();
-            }
-        }
         setupListeners();
         setupLayout();
         setAugmentedRealityPoint();
@@ -104,8 +76,8 @@ public class CameraViewActivity extends Activity implements
 	}
 
 	public double calculateTheoreticalAzimuth() {
-		double dX = mPoi.getPoiLatitude() - mMyLatitude;
-		double dY = mPoi.getPoiLongitude() - mMyLongitude;
+		double dX = mPoi.getPoiLatitude() - myLatitude;
+		double dY = mPoi.getPoiLongitude() - myLongitude;
 
 		double phiAngle;
 		double tanPhi;
@@ -158,50 +130,10 @@ public class CameraViewActivity extends Activity implements
 	}
 
 	private void updateDescription() {
-        if(myCurrentLocation == null) {
-            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                myCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-                descriptionTextView.setText(mPoi.getPoiName() + " azimuthTeoretical "
-                        + mAzimuthTheoretical + " azimuthReal " + mAzimuthReal + " latitude "
-                        + myCurrentLocation.getLatitude() + " longitude " + myCurrentLocation.getLongitude());
-            }
-        }
-        else {
-            descriptionTextView.setText(":(((");
-        }
+        descriptionTextView.setText(mPoi.getPoiName() + " azimuthTeoretical "
+                + mAzimuthTheoretical + " azimuthReal " + mAzimuthReal + " latitude "
+                + myLatitude + " longitude " + myLongitude);
 	}
-
-    @Override
-    public void onConnected(Bundle bundle) {
-        mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(1000);
-        mLocationRequest.setFastestInterval(1000);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-        }
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        myCurrentLocation = location;
-
-        mAzimuthTheoretical = calculateTheoreticalAzimuth();
-        Toast.makeText(this,"latitude: "+myCurrentLocation.getLatitude()+" longitude: "+myCurrentLocation.getLongitude(), Toast.LENGTH_SHORT).show();
-        updateDescription();
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.e("MyApp", "Location services connection failed with code " + connectionResult.getErrorCode());
-    }
 
 	@Override
 	public void onAzimuthChanged(float azimuthChangedFrom, float azimuthChangedTo) {
@@ -225,8 +157,13 @@ public class CameraViewActivity extends Activity implements
             knightIcon.setVisibility(View.INVISIBLE);
             shadow.setVisibility(View.INVISIBLE);
         }
+		updateDescription();
 	}
 
+    @Override
+    protected void onStart(){
+        super.onStart();
+    }
 	@Override
 	protected void onStop() {
         if (mCamera != null)
@@ -328,7 +265,6 @@ public class CameraViewActivity extends Activity implements
 
     public static final int MY_PERMISSIONS_REQUEST_CAMERA = 1;
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 2;
-
     private void checkCameraPermission() {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.CAMERA)
@@ -431,23 +367,7 @@ public class CameraViewActivity extends Activity implements
                 }
                 return;
             }
-            case MY_PERMISSIONS_REQUEST_LOCATION: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                    // Permission was granted, yay! Do the
-                    // location task you need to do.
-                    myCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(
-                            mGoogleApiClient);
-                } else {
-
-                    // Permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                }
-
-                return;
-            }
         }
     }
 }

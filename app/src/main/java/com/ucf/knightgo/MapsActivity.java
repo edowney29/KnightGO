@@ -41,6 +41,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public int inventorySize = 0;
     private static GoogleMap mMap;
+
     private final Location ucfCampus = new Location("UCF Campus");
     private final int knightsNumber = 10;
     public static ArrayList<Knight> knightList  = new ArrayList<Knight>();
@@ -48,6 +49,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public static ArrayList<Marker> knightMarkers = new ArrayList<>();
     GoogleApiClient mGoogleApiClient;
     LocationRequest mLocationRequest;
+    private LatLng ucfLocation;
     Location mLastLocation;
     Marker mCurrLocationMarker;
     private Marker curMarker;
@@ -62,6 +64,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         ucfCampus.setLatitude(28.6024274);
         ucfCampus.setLongitude(-81.2000599);
+        ucfLocation = new LatLng(28.6024274,-81.2000599);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -83,6 +86,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 checkLocationPermission();
             }
         }
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ucfLocation, 15));
+
         // Welcome message on 1st visit of activity
         if(knightList.size()== 0)
             WelcomeMessage();
@@ -106,10 +111,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onConnected(Bundle bundle) {
-        mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(1000);
-        mLocationRequest.setFastestInterval(1000);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        mLocationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(10 * 1000)        // 10 seconds, in milliseconds
+                .setFastestInterval(1 * 1000); // 1 second, in milliseconds
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -140,8 +145,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         markerOptions.position(latLng);
 
         // Move map camera
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
+        //mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        //mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
 
         // Stop location updates
         if (mGoogleApiClient != null) {
@@ -211,6 +216,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         markerList.add(knightMarker);
     }
 
+    // Runs when a marker is pressed
     @Override
     public boolean onMarkerClick(final Marker marker) {
         Knight selectedKnight= (Knight)marker.getTag();
@@ -218,8 +224,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         curMarker = marker;
         Intent intent = new Intent(this, CameraViewActivity.class);
         intent.putExtra("icon",selectedKnight.getBigIcon());
-        intent.putExtra("lat",selectedKnight.getLatitude());
-        intent.putExtra("long",selectedKnight.getLongitude());
+        intent.putExtra("kLat",selectedKnight.getLatitude());
+        intent.putExtra("kLong",selectedKnight.getLongitude());
+        intent.putExtra("myLat",mLastLocation.getLatitude());
+        intent.putExtra("myLong",mLastLocation.getLongitude());
 
         startActivityForResult(intent,1);
 
