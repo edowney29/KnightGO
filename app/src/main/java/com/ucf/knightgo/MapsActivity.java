@@ -45,14 +45,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private final Location ucfCampus = new Location("UCF Campus");
     private final int knightsNumber = 10;
     public static ArrayList<Knight> knightList  = new ArrayList<>();
-    public static ArrayList<MarkerOptions> markerList = new ArrayList<>();
     public static ArrayList<Marker> knightMarkers = new ArrayList<>();
     GoogleApiClient mGoogleApiClient;
     LocationRequest mLocationRequest;
     private LatLng ucfLocation;
     Location mLastLocation;
     Circle circle;
-
+    private MarkerOptions knightMarker;
     private Marker curMarker;
     private Knight curKnight;
     private Timer timer;
@@ -158,21 +157,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void DisplayKnights(){
+        mMap.clear();
         knightMarkers.clear();
-        for(int i = 0; i < markerList.size();i++) {
-            knightMarkers.add(mMap.addMarker(markerList.get(i)));
-            knightMarkers.get(i).setTag(knightList.get(i));
+        for(int i = 0; i < knightList.size();i++) {
+            Knight mKnight = knightList.get(i);
+            knightMarker = new MarkerOptions()
+                    .position(mKnight.getLocation())
+                    .title(mKnight.getName())
+                    .icon(BitmapDescriptorFactory.fromResource(mKnight.getMapIcon()));
+            knightMarkers.add(mMap.addMarker(knightMarker));
+            knightMarkers.get(i).setTag(mKnight);
         }
-        Context context = getApplicationContext();
-        //Toast welcome = Toast.makeText(context,"Knights left " + knightMarkers.size(), Toast.LENGTH_LONG);
-        //welcome.show();
+
     }
 
     public void CreateKnights(){
         Random r = new Random();
         int knightType = 0;
         LatLng knightLoc;
-        MarkerOptions knightMarker;
         for(int i = 0 ;i < knightsNumber ; i++){
             // Just until 8 because we want only 1 pegasus to be available
             knightType = r.nextInt(8);
@@ -193,7 +195,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             // At the very end we at them to our Array list to keep track of what is that we have created
             knightList.add(newKnight);
-            markerList.add(knightMarker);
         }
 
         // Adding the only Pegasus
@@ -208,7 +209,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .title(newKnight.getName())
                 .icon(BitmapDescriptorFactory.fromResource(newKnight.getMapIcon()));
         knightList.add(newKnight);
-        markerList.add(knightMarker);
     }
 
     // Runs when a marker is pressed
@@ -217,6 +217,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Knight selectedKnight= (Knight)marker.getTag();
         curKnight = selectedKnight;
         curMarker = marker;
+
         Intent intent = new Intent(this, CameraViewActivity.class);
         intent.putExtra("icon",selectedKnight.getBigIcon());
         intent.putExtra("kLat",selectedKnight.getLatitude());
@@ -243,11 +244,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 inventorySize++;
                 knightList.remove(curKnight);
                 knightMarkers.remove(curMarker);
-                markerList.clear();
                 curMarker.remove();
+                DisplayKnights();
+                Context context = getApplicationContext();
+                Toast confirm = Toast.makeText(context,curKnight.getName() + " Knight has been added to your army", Toast.LENGTH_LONG);
+                confirm.show();
             }
-            DisplayKnights();
         }
+        DisplayKnights();
     }
 
     @Override

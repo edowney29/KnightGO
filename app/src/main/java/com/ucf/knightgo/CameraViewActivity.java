@@ -130,7 +130,7 @@ public class CameraViewActivity extends Activity implements
 	}
 
 	private void updateDescription() {
-        descriptionTextView.setText(mPoi.getPoiName() + " azimuthTeoretical "
+        descriptionTextView.setText(mPoi.getPoiName() + " azimuthTheoretical "
                 + mAzimuthTarget + " azimuthReal " + mAzimuthReal + " latitude "
                 + myLatitude + " longitude " + myLongitude);
 	}
@@ -264,7 +264,6 @@ public class CameraViewActivity extends Activity implements
     }
 
     public static final int MY_PERMISSIONS_REQUEST_CAMERA = 1;
-    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 2;
     private void checkCameraPermission() {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.CAMERA)
@@ -305,41 +304,6 @@ public class CameraViewActivity extends Activity implements
         }
     }
 
-    private void checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.ACCESS_FINE_LOCATION)) {
-
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-                new AlertDialog.Builder(this)
-                        .setTitle("Location Permission Needed")
-                        .setMessage("This app needs the Location permission, please accept to use location functionality")
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                //Prompt the user once explanation has been shown
-                                ActivityCompat.requestPermissions(CameraViewActivity.this,
-                                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                                        MY_PERMISSIONS_REQUEST_LOCATION );
-                            }
-                        })
-                        .create()
-                        .show();
-
-
-            } else {
-                // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_LOCATION );
-            }
-        }
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
