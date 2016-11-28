@@ -44,7 +44,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static GoogleMap mMap;
 
     private final Location ucfCampus = new Location("UCF Campus");
-    private final int knightsNumber = 10;
+    private final int knightsNumber = 30;
     public static ArrayList<Knight> knightList  = new ArrayList<>();
     public static ArrayList<Marker> knightMarkers = new ArrayList<>();
     GoogleApiClient mGoogleApiClient;
@@ -157,29 +157,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    public void DisplayKnights(){
-        mMap.clear();
-        knightMarkers.clear();
-        circle = mMap.addCircle(new CircleOptions().center(ucfLocation).radius(pickupRange).strokeColor(Color.RED).visible(false));
-        for(int i = 0; i < knightList.size();i++) {
-            Knight mKnight = knightList.get(i);
-            knightMarker = new MarkerOptions()
-                    .position(mKnight.getLocation())
-                    .title(mKnight.getName())
-                    .icon(BitmapDescriptorFactory.fromResource(mKnight.getMapIcon()));
-            knightMarkers.add(mMap.addMarker(knightMarker));
-            knightMarkers.get(i).setTag(mKnight);
-        }
 
-    }
 
     public void CreateKnights(){
         Random r = new Random();
         int knightType = 0;
         LatLng knightLoc;
         for(int i = 0 ;i < knightsNumber ; i++){
-            // Just until 8 because we want only 1 pegasus to be available
-            knightType = r.nextInt(8);
+
+            knightType = r.nextInt(10);
 
             Knight newKnight = new Knight(knightType);
 
@@ -199,18 +185,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             knightList.add(newKnight);
         }
 
-        // Adding the only Pegasus
-        Knight newKnight = new Knight(9);
-        newKnight.setMapLocation();
-        double latitude = newKnight.getLatitude();
-        double longitude = newKnight.getLongitude();
-        knightLoc = new LatLng(latitude,longitude);
-        newKnight.setLocation(knightLoc);
-        knightMarker = new MarkerOptions()
-                .position(knightLoc)
-                .title(newKnight.getName())
-                .icon(BitmapDescriptorFactory.fromResource(newKnight.getMapIcon()));
-        knightList.add(newKnight);
+    }
+    //create the markers and pickup range
+    public void DisplayKnights(){
+        //we clear the map and the array the army.
+        mMap.clear();
+        knightMarkers.clear();
+        circle = mMap.addCircle(new CircleOptions().center(ucfLocation).radius(pickupRange).strokeColor(Color.RED).visible(false));
+        for(int i = 0; i < knightList.size();i++) {
+            Knight mKnight = knightList.get(i);
+            knightMarker = new MarkerOptions()
+                    .position(mKnight.getLocation())
+                    .title(mKnight.getName())
+                    .icon(BitmapDescriptorFactory.fromResource(mKnight.getMapIcon()));
+            knightMarkers.add(mMap.addMarker(knightMarker));
+            knightMarkers.get(i).setTag(mKnight);
+        }
+
     }
 
     // Runs when a marker is pressed
@@ -319,7 +310,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
     }
-
+    //request permition to access location
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
