@@ -114,13 +114,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             dialog.show();
 
         }
-
-
+            // Focus map to UCF campus.
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ucfLocation, 15));
-
-        // Welcome message on 1st visit of activity
-        if(inventorySize == 0)
-            WelcomeMessage();
 
         // Generate knights
         if(knightList.size() == 0) {
@@ -131,6 +126,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
+    // Set up Play Services client
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -142,10 +138,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onConnected(Bundle bundle) {
+        // Set up location requests.
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(10 * 1000)        // 10 seconds, in milliseconds
                 .setFastestInterval(1 * 1000); // 1 second, in milliseconds
+
+        // Request location updates.
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -163,21 +162,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onLocationChanged(Location location) {
         mLastLocation = location;
 
-        // Place current location marker
+        // Get current location
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
 
+        // Draw pick up range indicator around player location.
         if(circle != null) {
             circle.remove();
         }
         circle = mMap.addCircle(new CircleOptions().center(latLng).radius(pickupRange).strokeColor(Color.RED).visible(true));
 
-        // Move map camera
-        //mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        //mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
-
     }
-
-
 
     public void CreateKnights(){
         Random r = new Random();
@@ -201,16 +195,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .title(newKnight.getName())
                     .icon(BitmapDescriptorFactory.fromResource(newKnight.getMapIcon()));
 
-            // At the very end we at them to our Array list to keep track of what is that we have created
+            // At the very end we at them to our Array list to keep track of Knights
             knightList.add(newKnight);
         }
 
     }
-    //create the markers and pickup range
+
+
     public void DisplayKnights(){
-        //we clear the map and the array the army.
+        //Clear map and marker array.
         mMap.clear();
         knightMarkers.clear();
+
+        // Generate new markers based on knight array.
         for(int i = 0; i < knightList.size();i++) {
             Knight mKnight = knightList.get(i);
             knightMarker = new MarkerOptions()
@@ -218,11 +215,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .title(mKnight.getName())
                     .icon(BitmapDescriptorFactory.fromResource(mKnight.getMapIcon()));
             knightMarkers.add(mMap.addMarker(knightMarker));
+
+            // Set the knight instance to each marker.
             knightMarkers.get(i).setTag(mKnight);
         }
     }
 
-    // Runs when a marker is pressed
+    // Runs when a marker is pressed.
     @Override
     public boolean onMarkerClick(final Marker marker) {
 
@@ -236,7 +235,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         knightLoc.setLatitude(curKnight.getLatitude());
         knightLoc.setLongitude(curKnight.getLongitude());
 
-        // REMOVE || TRUE WHEN RELEASE!!!
+        // REMOVE || TRUE ON RELEASE!!!
+        // If player is within pickup range of selected knight, move to Camera activity.
         if(mLastLocation.distanceTo(knightLoc) <= pickupRange || true) {
             Intent intent = new Intent(this, CameraViewActivity.class);
             intent.putExtra("icon", selectedKnight.getBigIcon());
@@ -313,9 +313,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Context context = getApplicationContext();
         Toast outRange = Toast.makeText(context,"Knight is out of range for collection", Toast.LENGTH_LONG);
         outRange.show();
-    }
-    private void WelcomeMessage(){
-
     }
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;

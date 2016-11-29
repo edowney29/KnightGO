@@ -36,7 +36,7 @@ public class CameraViewActivity extends Activity implements
     private int iconRef;
 	private double mAzimuthReal = 0;
 	private double mAzimuthTarget = 0;
-	private static double AZIMUTH_ACCURACY = 25;
+	private static double AZIMUTH_ACCURACY = 30;
 	private double myLatitude = 0;
 	private double myLongitude = 0;
     private double knightLat = 0;
@@ -68,8 +68,6 @@ public class CameraViewActivity extends Activity implements
 
 	private void setAugmentedRealityPoint() {
 		mPoi = new AugmentedPOI(
-				"Test",
-				"Description",
 				knightLat,
 				knightLong
 		);
@@ -83,6 +81,7 @@ public class CameraViewActivity extends Activity implements
 		double tanPhi;
 		double azimuth = 0;
 
+        // Trig stuff that calculates angle between current location and knight location.
 		tanPhi = Math.abs(dY / dX);
 		phiAngle = Math.atan(tanPhi);
 		phiAngle = Math.toDegrees(phiAngle);
@@ -96,10 +95,10 @@ public class CameraViewActivity extends Activity implements
 		} else if (dX > 0 && dY < 0) { // IV
 			return azimuth = 360 - phiAngle;
 		}
-
 		return phiAngle;
 	}
-	
+
+    // Sets range of valid azimuth values
 	private List<Double> calculateAzimuthAccuracy(double azimuth) {
 		double minAngle = azimuth - AZIMUTH_ACCURACY;
 		double maxAngle = azimuth + AZIMUTH_ACCURACY;
@@ -118,7 +117,9 @@ public class CameraViewActivity extends Activity implements
 		return minMax;
 	}
 
+    // Checks to see if azimuth is between valid angles.
 	private boolean isBetween(double minAngle, double maxAngle, double azimuth) {
+        // If min > max, then check the angle outside of their range.
 		if (minAngle > maxAngle) {
 			if (isBetween(0, maxAngle, azimuth) && isBetween(minAngle, 360, azimuth))
 				return true;
@@ -130,16 +131,18 @@ public class CameraViewActivity extends Activity implements
 	}
 
 	private void updateDescription() {
-        descriptionTextView.setText(mPoi.getPoiName() + " azimuthTheoretical "
-                + mAzimuthTarget + " azimuthReal " + mAzimuthReal + " latitude "
+        descriptionTextView.setText("Target Azimuth: "  + mAzimuthTarget +
+                " Current Azimuth: " + mAzimuthReal + " latitude "
                 + myLatitude + " longitude " + myLongitude);
 	}
 
+    // Called every time Azimuth changes (Azimuth changes several times per second)
 	@Override
 	public void onAzimuthChanged(float azimuthChangedFrom, float azimuthChangedTo) {
 		mAzimuthReal = azimuthChangedTo;
         mAzimuthTarget = calculateTargetAzimuth();
 
+        // Set up knight icon and its shadow.
         knightIcon = (ImageButton) findViewById(R.id.iconButton);
         knightIcon.setImageResource(iconRef);
 
@@ -152,7 +155,6 @@ public class CameraViewActivity extends Activity implements
 		if (isBetween(minAngle, maxAngle, mAzimuthReal)) {
             knightIcon.setVisibility(View.VISIBLE);
             shadow.setVisibility(View.VISIBLE);
-
 		} else {
             knightIcon.setVisibility(View.INVISIBLE);
             shadow.setVisibility(View.INVISIBLE);
@@ -164,6 +166,7 @@ public class CameraViewActivity extends Activity implements
     protected void onStart(){
         super.onStart();
     }
+
 	@Override
 	protected void onStop() {
         if (mCamera != null)
