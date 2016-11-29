@@ -34,16 +34,6 @@
         android:layout_alignStart="@+id/tutorial_button"
         android:layout_alignEnd="@+id/tutorial_button" />
 
-    <Button
-        android:text="How to Play"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="33dp"
-        android:id="@+id/tutorial_button"
-        android:layout_below="@+id/battle_button"
-        android:layout_centerHorizontal="true"
-        android:onClick="openTutorial" />
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -55,4 +45,14 @@
         android:textStyle="normal|bold"
         android:textSize="36sp"
         android:textColor="@android:color/white" />
+
+    <Button
+        android:text="How to Play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="33dp"
+        android:id="@+id/tutorial_button"
+        android:onClick="openTutorial"
+        android:layout_below="@+id/battle_button"
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>

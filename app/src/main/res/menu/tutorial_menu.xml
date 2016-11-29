@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="How To Get Knights"
+        android:id="@+id/mnuMap" />
+    <item android:title="How To Battle"
+        android:id="@+id/mnuBattle" />
+</menu>

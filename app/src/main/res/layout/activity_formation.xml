@@ -234,14 +234,6 @@
         android:layout_above="@+id/sc3"
         android:layout_alignParentEnd="true" />
 
-    <ImageView
-        android:layout_width="65dp"
-        android:layout_height="65dp"
-        app:srcCompat="@drawable/axe"
-        android:id="@+id/ib3"
-        android:layout_above="@+id/sb3"
-        android:layout_alignStart="@+id/ib2" />
-
     <Button
         android:text="Done"
         android:layout_width="wrap_content"
@@ -262,5 +254,13 @@
         android:layout_alignStart="@+id/ia1"
         android:scrollbars = "vertical"
         android:layout_alignParentBottom="true" />
+
+    <ImageView
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        app:srcCompat="@drawable/axe"
+        android:id="@+id/ib3"
+        android:layout_above="@+id/sb3"
+        android:layout_alignStart="@+id/sb3" />
 
 </RelativeLayout>
