@@ -1,6 +1,6 @@
 package com.ucf.knightgo;
 
-/**
+/*
  * Created by KShoults on 11/27/2016.
  */
 
@@ -10,7 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 
 public class SimulationActivity extends AppCompatActivity {
-
+    //public static final String SIMULATION = "com.ucf.knightgo.Simulation";
     private int playerScore;
     private int enemyScore;
     private int[] playerFormation;

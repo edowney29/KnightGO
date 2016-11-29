@@ -12,7 +12,6 @@ import android.content.Intent;
 
 public class FormationActivity extends AppCompatActivity
 {
-    //final Intent intent = new Intent(this, SimulationActivity.class);
     public static final String FORMATION = "com.ucf.knightgo.Formation";
 
     //add the image-changing functionality
@@ -174,10 +173,17 @@ public class FormationActivity extends AppCompatActivity
                 typeList[7] = getType(sb3);
                 typeList[8] = getType(sc3);
 
-                /*typeList[18] = intent.getIntExtra(BluetoothActivity.CONNECTION_TYPE, -1);
-                intent.putExtra(???,typeList);
-                */
+                goToSimulation(v, typeList);
             }
         });
+    }
+    public void goToSimulation(View view, int typeList[])
+    {
+        Intent intent = new Intent(this, SimulationActivity.class);
+        //grab connection type from BluetoothActivity
+        typeList[18] = intent.getIntExtra(BluetoothActivity.CONNECTION_TYPE, -1);
+        //send the list off to the FormationActivity
+        intent.putExtra(FORMATION,typeList);
+        startActivity(intent);
     }
 }
