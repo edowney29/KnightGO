@@ -8,7 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.ucf.knightgo.mainmenu"
+    tools:context="com.ucf.knightgo.MainMenu"
     android:background="@android:color/background_dark">
 
     <Button
@@ -20,7 +20,7 @@
         android:layout_below="@+id/explore_button"
         android:layout_alignStart="@+id/explore_button"
         android:onClick="openBattle"
-        android:layout_alignEnd="@id/tutorial_button" />
+        android:layout_alignEnd="@+id/tutorial_button" />
 
     <Button
         android:text="Explore"
@@ -31,9 +31,8 @@
         android:layout_centerHorizontal="true"
         android:elevation="0dp"
         android:onClick="openMap"
-        android:layout_alignStart="@id/tutorial_button"
-        android:layout_alignRight="@id/tutorial_button"
-        android:layout_alignEnd="@id/tutorial_button" />
+        android:layout_alignStart="@+id/tutorial_button"
+        android:layout_alignEnd="@+id/tutorial_button" />
 
     <Button
         android:text="How to Play"
