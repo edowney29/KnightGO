@@ -12,6 +12,8 @@ import android.content.Intent;
 
 public class FormationActivity extends AppCompatActivity
 {
+
+    private int[] inventory = Player.getInstance().getInventory();
     public static final String FORMATION = "com.ucf.knightgo.Formation";
 
     //add the image-changing functionality
@@ -24,10 +26,13 @@ public class FormationActivity extends AppCompatActivity
             {
                 String current = parent.getSelectedItem().toString();
                 switch(current)
-                {   case("Shield"):
                 {
-                    img.setImageResource(R.drawable.shield);
-                    break;}
+                    case("None"):
+                    {img.setImageResource(R.drawable.none);
+                        break;}
+                    case("Shield"):
+                    {img.setImageResource(R.drawable.shield);
+                        break;}
                     case("Bow"):
                     {img.setImageResource(R.drawable.longbow);
                         break;}
@@ -62,7 +67,6 @@ public class FormationActivity extends AppCompatActivity
             @Override
             public void onNothingSelected(AdapterView<?> parent)
             {
-
             }
         });
     }
