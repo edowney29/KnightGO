@@ -62,7 +62,9 @@ public class FormationActivity extends AppCompatActivity
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent)
-            {}
+            {
+
+            }
         });
     }
 

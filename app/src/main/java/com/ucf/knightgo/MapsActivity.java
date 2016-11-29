@@ -135,26 +135,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onLocationChanged(Location location) {
         mLastLocation = location;
 
-        if(mLastLocation.distanceTo(ucfCampus) > 5000)
-        {
-            Context context = getApplicationContext();
-            Toast offCampus = Toast.makeText(context,"Travel to the UCF Campus to find Knights", Toast.LENGTH_LONG);
-            offCampus.show();
-        }
-
         // Place current location marker
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        circle.setCenter(latLng);
-        circle.setVisible(true);
+
+        if(circle != null) {
+            circle.remove();
+        }
+        circle = mMap.addCircle(new CircleOptions().center(latLng).radius(pickupRange).strokeColor(Color.RED).visible(true));
 
         // Move map camera
         //mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         //mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
 
-        // Stop location updates
-        if (mGoogleApiClient != null) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-        }
     }
 
 
@@ -191,7 +183,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //we clear the map and the array the army.
         mMap.clear();
         knightMarkers.clear();
-        circle = mMap.addCircle(new CircleOptions().center(ucfLocation).radius(pickupRange).strokeColor(Color.RED).visible(false));
         for(int i = 0; i < knightList.size();i++) {
             Knight mKnight = knightList.get(i);
             knightMarker = new MarkerOptions()
@@ -201,7 +192,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             knightMarkers.add(mMap.addMarker(knightMarker));
             knightMarkers.get(i).setTag(mKnight);
         }
-
     }
 
     // Runs when a marker is pressed
@@ -211,12 +201,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Knight selectedKnight= (Knight)marker.getTag();
         curKnight = selectedKnight;
         curMarker = marker;
+        if(curKnight == null)
+            return false;
 
         Location knightLoc = new Location("Knight Location");
         knightLoc.setLatitude(curKnight.getLatitude());
         knightLoc.setLongitude(curKnight.getLongitude());
 
-        if(mLastLocation.distanceTo(knightLoc) <= pickupRange) {
+        // REMOVE || TRUE WHEN RELEASE!!!
+        if(mLastLocation.distanceTo(knightLoc) <= pickupRange || true) {
             Intent intent = new Intent(this, CameraViewActivity.class);
             intent.putExtra("icon", selectedKnight.getBigIcon());
             intent.putExtra("kLat", selectedKnight.getLatitude());
@@ -250,19 +243,41 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 knightList.remove(curKnight);
                 knightMarkers.remove(curMarker);
                 curMarker.remove();
-                DisplayKnights();
                 Context context = getApplicationContext();
                 Toast confirm = Toast.makeText(context,curKnight.getName() + " Knight has been added to your army", Toast.LENGTH_LONG);
                 confirm.show();
             }
         }
+        // Generate knights if needed. NOTE: This should be replaced by timer generated knights.
+        if(knightList.size() == 0) {
+            CreateKnights();
+        }
+
         DisplayKnights();
     }
 
     @Override
-    public void onResume(){
+    protected void onPause() {
+        super.onPause();
 
+        // Stop location updates
+        if (mGoogleApiClient != null) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+        }
+    }
+    @Override
+    public void onResume(){
         super.onResume();
+
+        // Start location updates
+        if(mGoogleApiClient != null) {
+            if (ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) {
+                LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+            }
+        }
+
         // TODO: timer goes here
     }
 
@@ -310,7 +325,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
     }
-    //request permition to access location
+    //request permission to access location
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {

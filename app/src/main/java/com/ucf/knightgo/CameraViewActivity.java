@@ -179,12 +179,15 @@ public class CameraViewActivity extends Activity implements
 	@Override
 	protected void onResume() {
 		super.onResume();
+		if(mCamera != null)
+		{
+			mCamera.release();
+		}
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED) {
+                == PackageManager.PERMISSION_GRANTED) {
             mCamera = Camera.open();
         }
-
         else
         {
             checkCameraPermission();
