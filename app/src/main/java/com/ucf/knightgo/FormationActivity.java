@@ -1,20 +1,26 @@
 package com.ucf.knightgo;
 
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Button;
 import android.view.View;
 import android.content.Intent;
+import android.widget.TextView;
+import android.widget.Toast;
 
 
 public class FormationActivity extends AppCompatActivity
 {
 
-    private int[] inventory = Player.getInstance().getInventory();
+    private int[] inventory;
+    private int[] armyFormation = new int[9];
     public static final String FORMATION = "com.ucf.knightgo.Formation";
+    private TextView invenText;
 
     //add the image-changing functionality
     public void setSpinListener(Spinner spin, final ImageView img)
@@ -24,7 +30,9 @@ public class FormationActivity extends AppCompatActivity
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
             {
+
                 String current = parent.getSelectedItem().toString();
+
                 switch(current)
                 {
                     case("None"):
@@ -78,7 +86,13 @@ public class FormationActivity extends AppCompatActivity
         //I know, I know, another switch
         String choice = spin.getSelectedItem().toString();
         switch(choice)
-        {   case("Shield"):
+        {
+            case("None"):
+            {
+                type=-1;
+                break;
+            }
+            case("Shield"):
             {   type=0;
                 break;
             }
@@ -133,6 +147,17 @@ public class FormationActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_formation);
 
+        inventory = Player.getInstance().getInventory();
+
+        invenText = (TextView)findViewById(R.id.inventoryText);
+        invenText.setMovementMethod(new ScrollingMovementMethod());
+
+        // Show the players inventory
+        invenText.setText("Available Knights:\nShield: " + inventory[0] + "\nBow: " +
+                + inventory[1] +"\nCrossbow: " + inventory[2] + "\nSpear: " + inventory[3] + "\nSword: "
+                + inventory[4] + "\nAxe: " + inventory[5] + "\nMace: " + inventory[6] + "\nDagger: "
+                + inventory[7] + "\nHalberd: " + inventory[8] + "\nPegasus: " + inventory[9]);
+
         //create all variables for the images and dropdowns
         final ImageView ia1 = (ImageView) findViewById(R.id.ia1);
         final Spinner sa1 = (Spinner) findViewById(R.id.sa1);
@@ -177,7 +202,47 @@ public class FormationActivity extends AppCompatActivity
                 typeList[7] = getType(sb3);
                 typeList[8] = getType(sc3);
 
-                goToSimulation(v, typeList);
+                // Scan every cell for an empty knight (value -1)
+                int emptyFlag = 0;
+                int insufFlag = 0;
+                for(int i= 0; i<9;i++)
+                {
+                    if(typeList[i] == -1)
+                        emptyFlag = 1;
+
+                    // Build submitted army
+                    armyFormation[i]++;
+                }
+                for(int i = 0; i<9;i++)
+                {
+                    if(inventory[i] - armyFormation[i] < 0)
+                    {
+                        insufFlag = 1;
+                    }
+                }
+
+                // If an empty knight is found, notify user
+                if(emptyFlag == 1)
+                {
+                    Context context = getApplicationContext();
+                    Toast emptySpot = Toast.makeText(context,"All spaces must be occupied", Toast.LENGTH_LONG);
+                    emptySpot.show();
+                }
+                else
+                {
+                    // If there wasn't enough Knights in inventory for Formation, notify user
+                    if(insufFlag == 1)
+                    {
+                        Context context = getApplicationContext();
+                        Toast insufKnights = Toast.makeText(context,"Not enough knights for formation. Go collect some!", Toast.LENGTH_LONG);
+                        insufKnights.show();
+                    }
+                    // Else all spots are filled and formation is valid.
+                    else
+                    {
+                        goToSimulation(v, typeList);
+                    }
+                }
             }
         });
     }
