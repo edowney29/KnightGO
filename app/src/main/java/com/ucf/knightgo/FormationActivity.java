@@ -15,6 +15,9 @@ import android.content.Intent;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Map;
 
 
@@ -24,6 +27,8 @@ public class FormationActivity extends AppCompatActivity
     private int[] inventory;
     private int[] armyFormation;
     public static final String FORMATION = "com.ucf.knightgo.Formation";
+    private static InputStream mmInStream;
+    private static OutputStream mmOutStream;
     private TextView invenText;
 
     //add the image-changing functionality
@@ -151,6 +156,12 @@ public class FormationActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_formation);
 
+        try {
+            mmInStream = BluetoothActivity.socket.getInputStream();
+            mmOutStream = BluetoothActivity.socket.getOutputStream();
+        } catch (IOException e) { }
+
+
         inventory = Player.getInstance().getInventory();
 
         invenText = (TextView)findViewById(R.id.inventoryText);
@@ -257,12 +268,73 @@ public class FormationActivity extends AppCompatActivity
 
     public void goToSimulation(View view, int typeList[])
     {
-        Intent intent = new Intent(this, SimulationActivity.class);
-        //grab connection type from BluetoothActivity
-        typeList[18] = intent.getIntExtra(BluetoothActivity.CONNECTION_TYPE, -1);
+        Intent intent2sim = new Intent(this, SimulationActivity.class);
+
+        // Enemy byte string length is 9*4 bits
+        byte[] enemyBytes = new byte[typeList.length << 2];
+        int[] combinedFormation = new int[typeList.length*2];
+
+        // Copy players formation into 1st 9 indices
+        for(int i = 0;i<typeList.length;i++)
+            combinedFormation[i] = typeList[i];
+
+        // Get connection type (Host or Server)
+        Intent intentFromBlue = getIntent();
+        int connectionType = intentFromBlue.getIntExtra(BluetoothActivity.CONNECTION_TYPE, -1);
+
         int[] playerFormation = typeList;
-        //send the list off to the FormationActivity
-        intent.putExtra(FORMATION,typeList);
-        startActivity(intent);
+
+        byte[] playerByteArray = int2byte(playerFormation);
+
+        try{
+            // Write formation array to Output stream
+            mmOutStream.write(playerByteArray);
+
+            // Get enemy formation byte array from Input stream
+            mmInStream.read(enemyBytes);
+        } catch (IOException e) { }
+
+        // Convert enemy byte array to int array.
+        int[] enemyFormation = byte2int(enemyBytes);
+
+        // Add enemy formation to 2nd half of combined formation array.
+        for(int i = typeList.length;i< combinedFormation.length;i++)
+            combinedFormation[i] = enemyFormation[i];
+
+        //send the combined Formation off to FormationActivity
+        intent2sim.putExtra(FORMATION,combinedFormation);
+
+        // Pass in BT connection type (1 or 0)
+        intent2sim.putExtra(BluetoothActivity.CONNECTION_TYPE, connectionType);
+
+        startActivity(intent2sim);
+    }
+
+    // Converts int array to byte array for Bluetooth
+    public static byte[] int2byte(int[]src) {
+        int srcLength = src.length;
+        byte[]dst = new byte[srcLength << 2];
+
+        for (int i=0; i<srcLength; i++) {
+            int x = src[i];
+            int j = i << 2;
+            dst[j++] = (byte) ((x >>> 0) & 0xff);
+            dst[j++] = (byte) ((x >>> 8) & 0xff);
+            dst[j++] = (byte) ((x >>> 16) & 0xff);
+            dst[j++] = (byte) ((x >>> 24) & 0xff);
+        }
+        return dst;
+    }
+
+    // Converts byte array to int array
+    public int[] byte2int(byte buf[]) {
+        int intArr[] = new int[buf.length / 4];
+        int offset = 0;
+        for(int i = 0; i < intArr.length; i++) {
+            intArr[i] = (buf[3 + offset] & 0xFF) | ((buf[2 + offset] & 0xFF) << 8) |
+                    ((buf[1 + offset] & 0xFF) << 16) | ((buf[0 + offset] & 0xFF) << 24);
+            offset += 4;
+        }
+        return intArr;
     }
 }
