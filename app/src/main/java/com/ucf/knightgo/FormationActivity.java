@@ -22,7 +22,7 @@ public class FormationActivity extends AppCompatActivity
 {
 
     private int[] inventory;
-    private int[] armyFormation = new int[9];
+    private int[] armyFormation;
     public static final String FORMATION = "com.ucf.knightgo.Formation";
     private TextView invenText;
 
@@ -151,6 +151,12 @@ public class FormationActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_formation);
 
+        for(int i=0; i<3; i++) {
+            for(int j=0; j<10; j++) {
+                Player.getInstance().addKnight(j);
+            }
+        }
+
         inventory = Player.getInstance().getInventory();
 
         invenText = (TextView)findViewById(R.id.inventoryText);
@@ -194,6 +200,8 @@ public class FormationActivity extends AppCompatActivity
         {
             public void onClick(View v)
             {
+                armyFormation = new int[9];
+
                 //get the knight types for the users formation and populate an array
                 int typeList[] = new int[19];
                 typeList[0] = getType(sa1);
@@ -213,10 +221,11 @@ public class FormationActivity extends AppCompatActivity
                 {
                     if(typeList[i] == -1)
                         emptyFlag = 1;
-
-                    // Build submitted army
-                    armyFormation[i]++;
+                    else
+                        // Build submitted army
+                        armyFormation[typeList[i]]++;
                 }
+
                 for(int i = 0; i<9;i++)
                 {
                     if(inventory[i] - armyFormation[i] < 0)
