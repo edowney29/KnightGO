@@ -55,8 +55,8 @@ public class CameraViewActivity extends Activity implements
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
 		Intent intent = getIntent();
-        knightLat = intent.getDoubleExtra("KLat",0);
-        knightLong = intent.getDoubleExtra("KLong",0);
+        knightLat = intent.getDoubleExtra("kLat",0);
+        knightLong = intent.getDoubleExtra("kLong",0);
         myLatitude = intent.getDoubleExtra("myLat",0);
         myLongitude = intent.getDoubleExtra("myLong",0);
         iconRef = intent.getIntExtra("icon",0);

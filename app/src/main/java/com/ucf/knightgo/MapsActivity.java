@@ -8,6 +8,8 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.Manifest;
+import android.provider.Settings;
+import android.support.annotation.MainThread;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
@@ -88,7 +90,33 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ucfLocation, 15));
+        // Check if location services is enabled.
+        LocationManager lm = (LocationManager)this.getSystemService(Context.LOCATION_SERVICE);
+        boolean gps_enabled = false;
+
+        try {
+            gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        } catch(Exception ex) {}
+
+        // If Location Services are disabled, notify user and return to main menu.
+        if(!gps_enabled) {
+            // notify user
+            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+            dialog.setMessage("Please enable Location Services to use Exploration Mode");
+            dialog.setNeutralButton("Return to Main Menu", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                    Intent intent = new Intent(MapsActivity.this, MainMenu.class);
+                    startActivity(intent);
+                }
+            });
+            dialog.setCancelable(false);
+            dialog.show();
+
+        }
+
+
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ucfLocation, 15));
 
         // Welcome message on 1st visit of activity
         if(inventorySize == 0)
