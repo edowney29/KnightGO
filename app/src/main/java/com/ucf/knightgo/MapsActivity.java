@@ -47,6 +47,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public int inventorySize = 0;
     private int pickupRange = 75;
     private static GoogleMap mMap;
+    private int prevHour = -1;
 
     private final Location ucfCampus = new Location("UCF Campus");
     private final int knightsNumber = 30;
@@ -76,14 +77,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-
-        Calendar cal = Calendar.getInstance();
-
-        int millisecond = cal.get(Calendar.MILLISECOND);
-        int second = cal.get(Calendar.SECOND);
-        int minute = cal.get(Calendar.MINUTE);
-        int hourofday = cal.get(Calendar.HOUR_OF_DAY);
-
     }
 
     @Override
@@ -101,6 +94,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 checkLocationPermission();
             }
         }
+
+        Calendar cal = Calendar.getInstance();
+
+        int hourofday = cal.get(Calendar.HOUR_OF_DAY);
+
+
 
         // Check if location services is enabled.
         LocationManager lm = (LocationManager)this.getSystemService(Context.LOCATION_SERVICE);
@@ -130,8 +129,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ucfLocation, 15));
 
         // Generate knights
-        if(knightList.size() == 0) {
+        if(prevHour != hourofday) {
             CreateKnights();
+            prevHour = hourofday;
         }
 
         DisplayKnights();
@@ -247,9 +247,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         knightLoc.setLatitude(curKnight.getLatitude());
         knightLoc.setLongitude(curKnight.getLongitude());
 
-        // REMOVE || TRUE ON RELEASE!!!
         // If player is within pickup range of selected knight, move to Camera activity.
-        if(mLastLocation.distanceTo(knightLoc) <= pickupRange || true) {
+        if(mLastLocation.distanceTo(knightLoc) <= pickupRange) {
             Intent intent = new Intent(this, CameraViewActivity.class);
             intent.putExtra("icon", selectedKnight.getBigIcon());
             intent.putExtra("kLat", selectedKnight.getLatitude());

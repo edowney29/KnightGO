@@ -19,7 +19,8 @@
         android:id="@+id/battle_button"
         android:layout_below="@+id/explore_button"
         android:layout_alignStart="@+id/explore_button"
-        android:onClick="openBattle" />
+        android:onClick="openBattle"
+        android:layout_alignEnd="@id/tutorial_button" />
 
     <Button
         android:text="Explore"
@@ -29,7 +30,10 @@
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         android:elevation="0dp"
-        android:onClick="openMap" />
+        android:onClick="openMap"
+        android:layout_alignStart="@id/tutorial_button"
+        android:layout_alignRight="@id/tutorial_button"
+        android:layout_alignEnd="@id/tutorial_button" />
 
     <Button
         android:text="How to Play"
