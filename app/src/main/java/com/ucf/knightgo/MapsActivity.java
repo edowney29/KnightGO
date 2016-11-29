@@ -97,9 +97,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
 
-
-
-
         // Check if location services is enabled.
         LocationManager lm = (LocationManager)this.getSystemService(Context.LOCATION_SERVICE);
         boolean gps_enabled = false;
@@ -251,7 +248,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         knightLoc.setLongitude(curKnight.getLongitude());
 
         // If player is within pickup range of selected knight, move to Camera activity.
-        if(mLastLocation.distanceTo(knightLoc) <= pickupRange) {
+        if(mLastLocation.distanceTo(knightLoc) <= pickupRange || true) {
             Intent intent = new Intent(this, CameraViewActivity.class);
             intent.putExtra("icon", selectedKnight.getBigIcon());
             intent.putExtra("kLat", selectedKnight.getLatitude());
@@ -308,9 +305,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onResume(){
         super.onResume();
-
         // Start location updates
         if(mGoogleApiClient != null) {
+            if (!mGoogleApiClient.isConnected()) {
+                mGoogleApiClient.connect();
+            }
             if (ContextCompat.checkSelfPermission(this,
                     Manifest.permission.ACCESS_FINE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) {

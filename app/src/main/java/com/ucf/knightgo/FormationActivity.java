@@ -26,7 +26,8 @@ public class FormationActivity extends AppCompatActivity
 
     private int[] inventory;
     private int[] armyFormation;
-    public static final String FORMATION = "com.ucf.knightgo.Formation";
+    public static final String PLAYER_FORMATION = "com.ucf.knight.go.PLAYER_FORMATION";
+    public static final String ENEMY_FORMATION = "com.ucf.knightgo.ENEMY_FORMATION";
     private static InputStream mmInStream;
     private static OutputStream mmOutStream;
     private TextView invenText;
@@ -298,12 +299,10 @@ public class FormationActivity extends AppCompatActivity
         // Convert enemy byte array to int array.
         int[] enemyFormation = byte2int(enemyBytes);
 
-        // Add enemy formation to 2nd half of combined formation array.
-        for(int i = typeList.length;i< combinedFormation.length;i++)
-            combinedFormation[i] = enemyFormation[i-typeList.length];
 
-        //send the combined Formation off to FormationActivity
-        intent2sim.putExtra(FORMATION,combinedFormation);
+        //send the Formations off to FormationActivity
+        intent2sim.putExtra(PLAYER_FORMATION,playerFormation);
+        intent2sim.putExtra(ENEMY_FORMATION,enemyFormation);
 
         // Pass in BT connection type (1 or 0)
         intent2sim.putExtra(BluetoothActivity.CONNECTION_TYPE, connectionType);

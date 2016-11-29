@@ -40,7 +40,7 @@ public class SimulationActivity extends AppCompatActivity {
         battlefield = new Knight[9][3];
 
         Intent intent = getIntent();
-        combinedFormations = intent.getIntArrayExtra(FormationActivity.FORMATION);
+        //combinedFormations = intent.getIntArrayExtra(FormationActivity.FORMATION);
         for(int i=0; i < 9; i++) {
             playerFormation[i] = combinedFormations[i];
             enemyFormation[i] = combinedFormations[i+9];
