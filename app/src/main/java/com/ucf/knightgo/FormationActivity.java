@@ -1,6 +1,8 @@
 package com.ucf.knightgo;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
@@ -12,6 +14,8 @@ import android.view.View;
 import android.content.Intent;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.Map;
 
 
 public class FormationActivity extends AppCompatActivity
@@ -246,6 +250,8 @@ public class FormationActivity extends AppCompatActivity
             }
         });
     }
+
+
     public void goToSimulation(View view, int typeList[])
     {
         Intent intent = new Intent(this, SimulationActivity.class);

@@ -1,13 +1,11 @@
 package com.ucf.knightgo;
 
-public class Player {
+public class Player{
     private static Player mInstance = null;
 
-    private String mString;
     public int[] Inventory;
 
     private Player(){
-        mString = "Hello";
         Inventory = new int[10];
     }
 
@@ -18,15 +16,13 @@ public class Player {
         }
         return mInstance;
     }
-
-    public String getString(){
-        return this.mString;
+    public void setInventory(int [] array)
+    {
+        for(int i = 0; i< array.length; i++)
+        {
+            this.Inventory[i] = array[i];
+        }
     }
-
-    public void setString(String value){
-        mString = value;
-    }
-
     public int[] getInventory()
     {
         return this.Inventory;
@@ -36,4 +32,5 @@ public class Player {
     {
         Inventory[type]++;
     }
+
 }
