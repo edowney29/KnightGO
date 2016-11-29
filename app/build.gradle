@@ -36,6 +36,5 @@ dependencies {
     compile 'com.google.android.gms:play-services-maps:9.8.0'
     compile 'com.google.android.gms:play-services-location:9.8.0'
     compile 'com.android.support:multidex:1.0.1'
-    compile 'james.a.grant:wagon:1.1.0'
     testCompile 'junit:junit:4.12'
 }
