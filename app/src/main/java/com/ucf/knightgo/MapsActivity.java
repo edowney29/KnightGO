@@ -47,7 +47,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public int inventorySize = 0;
     private int pickupRange = 75;
     private static GoogleMap mMap;
-    private int prevHour = -1;
+    private static int prevHour = -1;
+    private int currentHour = -2;
 
     private final Location ucfCampus = new Location("UCF Campus");
     private final int knightsNumber = 30;
@@ -72,6 +73,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         ucfCampus.setLatitude(28.6024274);
         ucfCampus.setLongitude(-81.2000599);
         ucfLocation = new LatLng(28.6024274,-81.2000599);
+
+        Calendar cal = Calendar.getInstance();
+        currentHour = cal.get(Calendar.HOUR_OF_DAY);
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -95,9 +100,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
 
-        Calendar cal = Calendar.getInstance();
-
-        int hourofday = cal.get(Calendar.HOUR_OF_DAY);
 
 
 
@@ -128,11 +130,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             // Focus map to UCF campus.
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ucfLocation, 15));
 
-        // Generate knights
-        if(prevHour != hourofday) {
+        // Generate new knights every hour
+        if(prevHour != currentHour) {
+            knightList.clear();
             CreateKnights();
-            prevHour = hourofday;
+            prevHour = currentHour;
         }
+        // If the player has collected every knight for the hour. Notify user.
+        if(prevHour == currentHour && knightList.size() == 0)
+            emptyMapMessage();
 
         DisplayKnights();
 
@@ -287,10 +293,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 confirm.show();
             }
         }
-        // Generate knights if needed. NOTE: This should be replaced by timer generated knights.
-        if(knightList.size() == 0) {
-            CreateKnights();
-        }
+        // Player cleared map for the hour
+        if(prevHour == currentHour && knightList.size() == 0)
+            emptyMapMessage();
 
         DisplayKnights();
     }
@@ -319,6 +324,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // TODO: timer goes here
     }
 
+    private void emptyMapMessage(){
+        Context context = getApplicationContext();
+        Toast outRange = Toast.makeText(context,"You have collected all the knights for now. Knights will arrive next hour", Toast.LENGTH_LONG);
+        outRange.show();
+    }
     private void outofRangeMessage(){
         Context context = getApplicationContext();
         Toast outRange = Toast.makeText(context,"Knight is out of range for collection", Toast.LENGTH_LONG);
