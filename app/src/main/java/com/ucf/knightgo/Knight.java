@@ -108,7 +108,7 @@ public class Knight {
                 this.type = 7;
                 this.name = "Dagger";
                 this.health =   4;
-                this.damage =   6;
+                this.damage =   8;
                 this.range =    1;
                 this.movement = 2;
                 this.mapIcon = R.drawable.map_dagger;
@@ -133,7 +133,7 @@ public class Knight {
             {
                 this.type = 9;
                 this.name = "Pegasus";
-                this.health =   10;
+                this.health =   8;
                 this.damage =   8;
                 this.range =    1;
                 this.movement = 3;
@@ -205,15 +205,146 @@ public class Knight {
     public void setIsEnemy(boolean status){this.isEnemy = status;}
     public void setLocation(LatLng x){this.location = x;}
 
-    //modifiers - for Decreasing health when needed and potential dmg mods
+    // Modifiers - for Decreasing health when needed and potential dmg mods
 	private void modHealth(int modifier){this.health += modifier;}
 	private void modDamage(int modifier){this.damage += modifier;}
 
     //TODO: Finish move
     //Moving - will move forward a number of spaces equal to movement until it hits another Knight
     public Knight[][] move(Knight[][] battlefield) {
+        int moveSpace;
+        Knight cellContents;
 
-        return null;
+        // PEGASUS (jumps over enemies to furthest space within range of movement)
+        if(this.type == 9) {
+            // Pegasus belongs to the enemy player
+            if(this.isEnemy) {
+                // Check the furthest point within movement
+                moveSpace = this.row + this.movement;
+
+                // Reached the end of the board. Score!
+                if(moveSpace >= battlefield.length) {
+                    // The -1 row/col changes indicate a Knight has reached the other side.
+                    // Handle scoring and removal of the Knight in SimulationActivity.
+                    // SimulationActivity needs to check these values on every turn while it still
+                    // has the Knight's actual position.
+                    this.row = -1;
+                    this.col = -1;
+                    return battlefield;
+                }
+
+                // Check closer spaces until the Pegasus' current space is reached
+                while(moveSpace > this.row) {
+                    // Check the contents of the space to move to
+                    cellContents = battlefield[moveSpace][this.col];
+
+                    // The space is empty. Cleared for landing.
+                    if(cellContents == null) {
+                        battlefield[moveSpace][this.col] = this;
+                        battlefield[this.row][this.col] = null;
+                        this.row = moveSpace;
+
+                        // Early return statement to break out of loop
+                        return battlefield;
+                    }
+
+                    // Occupied space, check 1 space closer
+                    moveSpace--;
+                }
+            }
+
+            // Pegasus belongs to the player - logic and battlefield positions are reversed
+            else {
+                moveSpace = this.row - this.movement;
+
+                if(moveSpace < 0) {
+                    this.row = -1;
+                    this.col = -1;
+                    return battlefield;
+                }
+
+                while(moveSpace < this.row) {
+                    cellContents = battlefield[moveSpace][this.col];
+
+                    if(cellContents == null) {
+                        battlefield[moveSpace][this.col] = this;
+                        battlefield[this.row][this.col] = null;
+                        this.row = moveSpace;
+
+                        return battlefield;
+                    }
+
+                    moveSpace++;
+                }
+            }
+        }
+
+        // All other Knight types (move up to movement unless blocked by another Knight)
+        else {
+            // Knight belongs to the enemy player
+            if(this.isEnemy) {
+                moveSpace = this.row + 1;
+
+                // Continue until the maximum movement is reached
+                while(Math.abs(moveSpace - this.row) <= this.movement) {
+                    // Knight moved out-of-bounds, deletion and scoring to be handled by Simulation
+                    if(moveSpace >= battlefield.length) {
+                        this.row = -1;
+                        this.col = -1;
+                        return battlefield;
+                    }
+
+                    cellContents = battlefield[moveSpace][this.col];
+
+                    // Something in the way here, only move as far as the space before this
+                    if(cellContents != null && moveSpace != this.row) {
+                        battlefield[moveSpace-1][this.col] = this;
+                        battlefield[this.row][this.col] = null;
+                        this.row = moveSpace-1;
+                    }
+
+                    // Reached the end of our movement, nothing in the way
+                    else if(Math.abs(moveSpace - this.row) == this.movement) {
+                        battlefield[moveSpace][this.col] = this;
+                        battlefield[this.row][this.col] = null;
+                        this.row = moveSpace;
+                    }
+
+                    moveSpace++;
+                }
+            }
+
+            // Knight belongs to the player - logic and battlefield positions are reversed
+            else {
+                moveSpace = this.row - 1;
+
+                while(Math.abs(moveSpace - this.row) <= this.movement) {
+                    if(moveSpace < 0) {
+                        this.row = -1;
+                        this.col = -1;
+                        return battlefield;
+                    }
+
+                    cellContents = battlefield[moveSpace][this.col];
+
+                    if(cellContents != null && moveSpace != this.row) {
+                        battlefield[moveSpace+1][this.col] = this;
+                        battlefield[this.row][this.col] = null;
+                        this.row = moveSpace+1;
+                    }
+
+                    else if(Math.abs(moveSpace - this.row) == this.movement) {
+                        battlefield[moveSpace][this.col] = this;
+                        battlefield[this.row][this.col] = null;
+                        this.row = moveSpace;
+                    }
+
+                    moveSpace--;
+                }
+            }
+        }
+
+        return battlefield;
     }
 
     //Attacking - will attack the nearest enemy according to individual rules
@@ -474,6 +605,22 @@ public class Knight {
                     }
                 }
             }
+        }
+
+        return battlefield;
+    }
+
+    public Knight[][] turn(Knight[][] battlefield) {
+        // BOW and CROSSBOW (attack first, then move)
+        if(this.type == 1 || this.type == 2) {
+            battlefield = this.attack(battlefield);
+            battlefield = this.move(battlefield);
+        }
+
+        // All other Knights (move first, then attack)
+        else {
+            battlefield = this.move(battlefield);
+            battlefield = this.attack(battlefield);
         }
 
         return battlefield;

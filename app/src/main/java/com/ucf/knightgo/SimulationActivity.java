@@ -19,6 +19,14 @@ public class SimulationActivity extends AppCompatActivity {
     private int connectionType;
     private Knight[][] battlefield;
     private String result;
+    private final String[] columnLabels = {"A", "B", "C"};
+
+    // These arrays are ordered according to the Knights' turns in the simulation.
+    // They hold the Knights' coordinates in the battlefield matrix, or -1,-1 if the Knight scored.
+    // Very important for knowing when each Knight should move since once they're out of initial
+    // position, we no longer know the turn order.
+    private int[] knightsRow;
+    private int[] knightsCol;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +48,14 @@ public class SimulationActivity extends AppCompatActivity {
         connectionType = combinedFormations[18];
 
         initBattlefield();
+
+        // This is for Kevin's testing purposes:
+        // BAAAAAAAD DO NOT DO THIS OMG WHAT THE HELL STOP NO GET RID OF IT BEFORE RELEASE VERSION
+        /*for(int i=0; i<10; i++) {
+            for(int j=0; j<10; j++) {
+                Player.getInstance().addKnight(j);
+            }
+        }*/
     }
 
     /** Sets up the battlefield with the local player's Knights at the bottom and the enemy's
@@ -68,6 +84,13 @@ public class SimulationActivity extends AppCompatActivity {
     }
      /** Runs the battle according to the rules, assigns the final score values */
     private void simulateBattle() {
+        Knight currentKnight = new Knight(0);
+
+        // Needs to be somewhere in here immediately after turn()
+        // to check for Knights that reached the end
+        if(currentKnight.getRow() < 0 && currentKnight.getCol() < 0) {
+
+        }
 
     }
 
