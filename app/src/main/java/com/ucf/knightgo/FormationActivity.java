@@ -151,12 +151,6 @@ public class FormationActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_formation);
 
-        for(int i=0; i<3; i++) {
-            for(int j=0; j<10; j++) {
-                Player.getInstance().addKnight(j);
-            }
-        }
-
         inventory = Player.getInstance().getInventory();
 
         invenText = (TextView)findViewById(R.id.inventoryText);
@@ -266,6 +260,7 @@ public class FormationActivity extends AppCompatActivity
         Intent intent = new Intent(this, SimulationActivity.class);
         //grab connection type from BluetoothActivity
         typeList[18] = intent.getIntExtra(BluetoothActivity.CONNECTION_TYPE, -1);
+        int[] playerFormation = typeList;
         //send the list off to the FormationActivity
         intent.putExtra(FORMATION,typeList);
         startActivity(intent);

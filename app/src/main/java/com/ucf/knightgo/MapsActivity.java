@@ -38,8 +38,7 @@ import com.google.android.gms.common.ConnectionResult;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
+
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
@@ -62,8 +61,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private MarkerOptions knightMarker;
     private Marker curMarker;
     private Knight curKnight;
-    private Timer timer;
-    private TimerTask timerTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -320,8 +317,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
             }
         }
-
-        // TODO: timer goes here
     }
 
     private void emptyMapMessage(){
