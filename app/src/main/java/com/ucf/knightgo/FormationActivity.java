@@ -270,8 +270,13 @@ public class FormationActivity extends AppCompatActivity
     {
         Intent intent2sim = new Intent(this, SimulationActivity.class);
 
+        // Player formation is passed to method
+        int[] playerFormation = typeList;
+
         // Enemy byte string length is 9*4 bits
         byte[] enemyBytes = new byte[typeList.length << 2];
+
+        // Combined formation is both player and enemy formations
         int[] combinedFormation = new int[typeList.length*2];
 
         // Copy players formation into 1st 9 indices
@@ -282,15 +287,11 @@ public class FormationActivity extends AppCompatActivity
         Intent intentFromBlue = getIntent();
         int connectionType = intentFromBlue.getIntExtra(BluetoothActivity.CONNECTION_TYPE, -1);
 
-        int[] playerFormation = typeList;
-
         byte[] playerByteArray = int2byte(playerFormation);
 
         try{
             // Write formation array to Output stream
             mmOutStream.write(playerByteArray);
-
-            // Get enemy formation byte array from Input stream
             mmInStream.read(enemyBytes);
         } catch (IOException e) { }
 
@@ -299,7 +300,7 @@ public class FormationActivity extends AppCompatActivity
 
         // Add enemy formation to 2nd half of combined formation array.
         for(int i = typeList.length;i< combinedFormation.length;i++)
-            combinedFormation[i] = enemyFormation[i];
+            combinedFormation[i] = enemyFormation[i-typeList.length];
 
         //send the combined Formation off to FormationActivity
         intent2sim.putExtra(FORMATION,combinedFormation);
@@ -318,16 +319,16 @@ public class FormationActivity extends AppCompatActivity
         for (int i=0; i<srcLength; i++) {
             int x = src[i];
             int j = i << 2;
-            dst[j++] = (byte) ((x >>> 0) & 0xff);
-            dst[j++] = (byte) ((x >>> 8) & 0xff);
-            dst[j++] = (byte) ((x >>> 16) & 0xff);
             dst[j++] = (byte) ((x >>> 24) & 0xff);
+            dst[j++] = (byte) ((x >>> 16) & 0xff);
+            dst[j++] = (byte) ((x >>> 8) & 0xff);
+            dst[j++] = (byte) ((x >>> 0) & 0xff);
         }
         return dst;
     }
 
     // Converts byte array to int array
-    public int[] byte2int(byte buf[]) {
+    public static int[] byte2int(byte buf[]) {
         int intArr[] = new int[buf.length / 4];
         int offset = 0;
         for(int i = 0; i < intArr.length; i++) {
