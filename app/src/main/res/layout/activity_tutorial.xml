@@ -37,7 +37,7 @@
         android:layout_marginEnd="8dp" />
 
     <TextView
-        android:text="Welcome to Knight GO! "
+        android:text="Welcome to Knight GO!"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/tvTittle"

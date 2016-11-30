@@ -199,11 +199,12 @@ public class Knight {
     public String getName(){return name;}
     public LatLng getLocation(){return location;}
 
-    // Setters - setting location and enemy status
+    // Setters - setting location, enemy status, and damage
     public void setRow(int row){this.row = row;}
     public void setCol(int col){this.col = col;}
     public void setIsEnemy(boolean status){this.isEnemy = status;}
     public void setLocation(LatLng x){this.location = x;}
+    public void setDamage(int damage){this.damage = damage;}
 
     // Modifiers - for Decreasing health when needed and potential dmg mods
 	private void modHealth(int modifier){this.health += modifier;}
@@ -224,12 +225,11 @@ public class Knight {
 
                 // Reached the end of the board. Score!
                 if(moveSpace >= battlefield.length) {
-                    // The -1 row/col changes indicate a Knight has reached the other side.
+                    // The -1 row change indicates a Knight has reached the other side.
                     // Handle scoring and removal of the Knight in SimulationActivity.
-                    // SimulationActivity needs to check these values on every turn while it still
+                    // SimulationActivity needs to check this value on every turn while it still
                     // has the Knight's actual position.
                     this.row = -1;
-                    this.col = -1;
                     return battlefield;
                 }
 
@@ -259,7 +259,6 @@ public class Knight {
 
                 if(moveSpace < 0) {
                     this.row = -1;
-                    this.col = -1;
                     return battlefield;
                 }
 
@@ -290,24 +289,29 @@ public class Knight {
                     // Knight moved out-of-bounds, deletion and scoring to be handled by Simulation
                     if(moveSpace >= battlefield.length) {
                         this.row = -1;
-                        this.col = -1;
                         return battlefield;
                     }
 
                     cellContents = battlefield[moveSpace][this.col];
 
                     // Something in the way here, only move as far as the space before this
-                    if(cellContents != null && moveSpace != this.row) {
-                        battlefield[moveSpace-1][this.col] = this;
+                    if(cellContents != null && moveSpace > this.row) {
                         battlefield[this.row][this.col] = null;
+                        battlefield[moveSpace-1][this.col] = this;
                         this.row = moveSpace-1;
+
+                        // Reassignment of this.row interferes with while loop, early return instead
+                        return battlefield;
                     }
 
                     // Reached the end of our movement, nothing in the way
-                    else if(Math.abs(moveSpace - this.row) == this.movement) {
-                        battlefield[moveSpace][this.col] = this;
+                    else if(cellContents == null && Math.abs(moveSpace - this.row) == this.movement) {
                         battlefield[this.row][this.col] = null;
+                        battlefield[moveSpace][this.col] = this;
                         this.row = moveSpace;
+
+                        // Reassignment of this.row interferes with while loop, early return instead
+                        return battlefield;
                     }
 
                     moveSpace++;
@@ -321,22 +325,25 @@ public class Knight {
                 while(Math.abs(moveSpace - this.row) <= this.movement) {
                     if(moveSpace < 0) {
                         this.row = -1;
-                        this.col = -1;
                         return battlefield;
                     }
 
                     cellContents = battlefield[moveSpace][this.col];
 
-                    if(cellContents != null && moveSpace != this.row) {
-                        battlefield[moveSpace+1][this.col] = this;
+                    if(cellContents != null && moveSpace < this.row) {
                         battlefield[this.row][this.col] = null;
+                        battlefield[moveSpace+1][this.col] = this;
                         this.row = moveSpace+1;
+
+                        return battlefield;
                     }
 
                     else if(Math.abs(moveSpace - this.row) == this.movement) {
-                        battlefield[moveSpace][this.col] = this;
                         battlefield[this.row][this.col] = null;
+                        battlefield[moveSpace][this.col] = this;
                         this.row = moveSpace;
+
+                        return battlefield;
                     }
 
                     moveSpace--;
@@ -360,7 +367,8 @@ public class Knight {
                 attackRow = this.row + 1;
 
                 // Do not attack out-of-bounds or out-of-range targets
-                while(attackRow < battlefield.length && Math.abs(attackRow - this.row) <= this.range) {
+                while(attackRow < battlefield.length && attackRow >= 0
+                        && Math.abs(attackRow - this.row) <= this.range) {
                     // Get the next potential target
                     target = battlefield[attackRow][this.col];
 
@@ -371,7 +379,10 @@ public class Knight {
 
                         // Enemy health hit 0 or lower. He's dead, Jim.
                         if(target.getHealth() <= 0) {
-                            battlefield[attackRow][this.col] = null;
+                            // damage == -1 will be looked for in Sim as a sign to remove that
+                            // Knight. A loop through the whole battlefield is needed to check for
+                            // dead Knights.
+                            battlefield[attackRow][this.col].setDamage(-1);
 
                             // Permadeath
                             Player.getInstance().removeKnight(target.getType());
@@ -392,14 +403,15 @@ public class Knight {
             else {
                 attackRow = this.row - 1;
 
-                while(attackRow >= 0 && Math.abs(attackRow - this.row) <= this.range) {
+                while(attackRow < battlefield.length && attackRow >= 0
+                        && Math.abs(attackRow - this.row) <= this.range) {
                     target = battlefield[attackRow][this.col];
 
                     if(target != null && target.isEnemy()) {
                         target.modHealth(-this.damage);
 
                         if(target.getHealth() <= 0)
-                            battlefield[attackRow][this.col] = null;
+                            battlefield[attackRow][this.col].setDamage(-1);
                         else
                             battlefield[attackRow][this.col] = target;
 
@@ -417,7 +429,7 @@ public class Knight {
             if(this.isEnemy) {
                 // Get the row to attack and check if it's in-bounds
                 attackRow = this.row + (this.range - 1);
-                if(attackRow < battlefield.length) {
+                if(attackRow < battlefield.length && attackRow >= 0) {
                     // Get the contents of the space in front of the Spearman
                     target = battlefield[attackRow][this.col];
 
@@ -425,7 +437,7 @@ public class Knight {
                     if (target != null && target.isEnemy()) {
 
                         attackRow = this.row + this.range;
-                        if (attackRow < battlefield.length) {
+                        if (attackRow < battlefield.length && attackRow >= 0) {
                             target = battlefield[attackRow][this.col];
 
                             // Enemy Knight in front of ally. Sometimes, length DOES matter.
@@ -433,7 +445,7 @@ public class Knight {
                                 target.modHealth(-this.damage);
 
                                 if (target.getHealth() <= 0) {
-                                    battlefield[attackRow][this.col] = null;
+                                    battlefield[attackRow][this.col].setDamage(-1);
                                     Player.getInstance().removeKnight(target.getType());
                                 }
                                 else {
@@ -448,7 +460,7 @@ public class Knight {
                         target.modHealth(-this.damage);
 
                         if (target.getHealth() <= 0) {
-                            battlefield[attackRow][this.col] = null;
+                            battlefield[attackRow][this.col].setDamage(-1);
                             Player.getInstance().removeKnight(target.getType());
                         }
                         else {
@@ -461,20 +473,20 @@ public class Knight {
             // Spearman belongs to the player - logic and battlefield positions are reversed
             else {
                 attackRow = this.row - (this.range - 1);
-                if(attackRow >= 0) {
+                if(attackRow < battlefield.length && attackRow >= 0) {
                     target = battlefield[attackRow][this.col];
 
                     if (target != null && !target.isEnemy()) {
 
                         attackRow = this.row - this.range;
-                        if (attackRow < battlefield.length) {
+                        if (attackRow < battlefield.length && attackRow >= 0) {
                             target = battlefield[attackRow][this.col];
 
                             if (target != null && target.isEnemy()) {
                                 target.modHealth(-this.damage);
 
                                 if (target.getHealth() <= 0) {
-                                    battlefield[attackRow][this.col] = null;
+                                    battlefield[attackRow][this.col].setDamage(-1);
                                 }
                                 else {
                                     battlefield[attackRow][this.col] = target;
@@ -487,7 +499,7 @@ public class Knight {
                         target.modHealth(-this.damage);
 
                         if (target.getHealth() <= 0) {
-                            battlefield[attackRow][this.col] = null;
+                            battlefield[attackRow][this.col].setDamage(-1);
                         }
                         else {
                             battlefield[attackRow][this.col] = target;
@@ -503,7 +515,7 @@ public class Knight {
             // Halberdier belongs to the enemy player
             if(this.isEnemy) {
                 attackRow = this.row + this.range;
-                if(attackRow < battlefield.length) {
+                if(attackRow < battlefield.length && attackRow >= 0) {
 
                     //Move across the columns in this row
                     for(int i=0; i < battlefield[0].length; i++) {
@@ -515,11 +527,11 @@ public class Knight {
                             target.modHealth(-this.damage);
 
                             if (target.getHealth() <= 0) {
-                                battlefield[attackRow][this.col] = null;
+                                battlefield[attackRow][i].setDamage(-1);
                                 Player.getInstance().removeKnight(target.getType());
                             }
                             else {
-                                battlefield[attackRow][this.col] = target;
+                                battlefield[attackRow][i] = target;
                             }
                         }
                     }
@@ -529,7 +541,7 @@ public class Knight {
             // Halberdier belongs to the player - logic and battlefield positions are reversed
             else {
                 attackRow = this.row - this.range;
-                if(attackRow >= 0) {
+                if(attackRow < battlefield.length && attackRow >= 0) {
 
                     //Move across the columns in this row
                     for(int i=0; i < battlefield[0].length; i++) {
@@ -541,10 +553,10 @@ public class Knight {
                             target.modHealth(-this.damage);
 
                             if (target.getHealth() <= 0) {
-                                battlefield[attackRow][this.col] = null;
+                                battlefield[attackRow][i].setDamage(-1);
                             }
                             else {
-                                battlefield[attackRow][this.col] = target;
+                                battlefield[attackRow][i] = target;
                             }
                         }
                     }
@@ -558,7 +570,7 @@ public class Knight {
             // Knight belongs to the enemy player
             if(this.isEnemy) {
                 attackRow = this.row + this.range;
-                if(attackRow < battlefield.length) {
+                if(attackRow < battlefield.length && attackRow >= 0) {
 
                     target = battlefield[attackRow][this.col];
 
@@ -575,7 +587,7 @@ public class Knight {
                         }
 
                         if (target.getHealth() <= 0) {
-                            battlefield[attackRow][this.col] = null;
+                            battlefield[attackRow][this.col].setDamage(-1);
                             Player.getInstance().removeKnight(target.getType());
                         }
                         else {
@@ -588,7 +600,7 @@ public class Knight {
             // Knight belongs to the player - logic and battlefield positions are reversed
             else {
                 attackRow = this.row - this.range;
-                if(attackRow >= 0) {
+                if(attackRow < battlefield.length && attackRow >= 0) {
 
                     target = battlefield[attackRow][this.col];
 
@@ -605,7 +617,7 @@ public class Knight {
                         }
 
                         if (target.getHealth() <= 0) {
-                            battlefield[attackRow][this.col] = null;
+                            battlefield[attackRow][this.col].setDamage(-1);
                         }
                         else {
                             battlefield[attackRow][this.col] = target;
@@ -628,7 +640,7 @@ public class Knight {
         // All other Knights (move first, then attack)
         else {
             battlefield = this.move(battlefield);
-            if(this.row >= 0 && this.col >= 0 && this.row < battlefield.length && this.col < battlefield.length) {
+            if(this.row >= 0 && this.col >= 0) {
                 battlefield = this.attack(battlefield);
             }
         }
