@@ -47,35 +47,51 @@ public class TutorialActivity extends AppCompatActivity {
         int id = item.getItemId();
         switch(id){
             case R.id.mnuMap:
-                title.setText("How to Make my Army");
-                info.setText("The first Step to make an army is picking up some knights\n" +
-                        "In order to pick up Knights, user must go to Main Menu and click on Explore button.\n" +
-                        "A map will open up focusing University of Central Florida Location, and player will be able to see all knights on the map.\n" +
-                        "It is necessary to be near knight in order to pick it up." +
-                        "Once near a knight, you can click it on the map.\n" +
-                        "The camera will open up showing you the knight that that you are picking up,\n" +
-                        "its necessary to click the knight in order to add it to your inventory.\n" +
-                        "user will be returned to the map so can keep looking for more knights." +
-                        "The knight collected will disappear from the map and you will be able to use it in your battles.");
+                title.setText("How to Form Your Army");
+                info.setText("In order to build your army, you must explore the UCF campus to collect Knights.\n\n" +
+                        "First, click on the Explore button in the Main Menu.\n" +
+                        "A map of the University of Central Florida's campus will open, showing the Knights on the map.\n\n" +
+                        "To collect a Knight, approach a marker until it is within range indicated by the red circle around your location.\n" +
+                        "Once you are close enough, tap on the Knight's marker to enter Collection mode.\n\n" +
+                        "In Collection mode, you must use your device's camera to locate the Knight.\n" +
+                        "Once the Knight's seal has appeared on your camera, tap it to add that Knight to your inventory.\n" +
+                        "You are then returned to the map where you can continue collecting more Knights.\n\n" +
+                        "New Knights appear on campus every hour, so keep checking to add more to your army.");
                 battlefield.setImageResource(0);
                 knights.setImageResource(R.drawable.knights);
                 break;
             case R.id.mnuBattle:
-                title.setText("How to fight Battles");
-                info.setText("In order to fight against other players, user must click on the Battle button on Main Menu\n" +
-                        "once clicked on battle user will be able to either Host or Search for a battle\n" +
-                        "once joined on a battle room, user must select his own strategy and positioning of the knights\n\n" +
-                        "REMEMBER THAT THE POSITIONING OF THE KNIGHTS MATTER IN ORDER TO WIN!\n\n" +
-                        "Users will be able to look at their inventory in the bottom left.\n" +
-                        "Users can place any type of knight as many times as they want as long as they have it in their inventory" +
-                        "except for Pegasus, which can be used only once per battle\n" +
-                        "After placing your armies on the battlefield, click on Okay." +
-                        "Once the two players are ready, the battle will start.\n\n" +
-                        "GOOD LUCK");
+                title.setText("How to Battle");
+                info.setText("In order to fight against other players, click on the Battle button on the Main Menu.\n" +
+                        "Then you will be able to either Host a Battleground or Search for one.\n" +
+                        "Once both players have joined a battleground, each player must select their own strategy and formation of their collected knights\n\n" +
+                        "Each knight has their own unique fighting pattern, so try out different strategies!\n\n" +
+                        "You will be able to view your inventory in the bottom left of the formation screen.\n" +
+                        "Users can place any type of knight as many times as they want as long as they have enough in their inventory\n" +
+                        //"except for Pegasus, which can be used only once per battle\n" +
+                        "After placing your formation on the battlefield, click Okay." +
+                        "Once the two players are ready, the battle will commence.\n\n" +
+                        "GOOD LUCK AND HAVE FUN!");
                 knights.setImageResource(0);
                 battlefield.setImageResource(R.drawable.battlefield);
 
                 break;
+            case R.id.knightGuide:
+                title.setText("Knight Guide");
+                info.setText("Here are descriptions of each type of Knight in Knight GO.\nNote: The rating " +
+                        "values are not the exact numbers.\n\nSword\nHealth: 4/5\nDamage: 4/5\nStyle: Melee\nSpecial: None\n" +
+                        "The standard fighter. Can deal and take a decent amount of damage\n\n" +
+                        "Spear\nHealth: 3/5\nDamage: 3/5\nStyle:Melee\nSpecial: Can attack enemies while standing behind an ally\n" +
+                        "A formidable Knight. Sacrifices some damage for utility.\n\n" +
+                        "Bow\nHealth:2/5\nDamage:3/5\nStyle:Ranged\nSpecial:None\n" +
+                        "Assaults enemies from afar. Try to keep them away from the frontline.\n\n" +
+                        "Mace\nHealth: 4/5\nDamage: 3/5\nStyle:Melee\nSpecial: Deals increased damage towards Halberdiers.\n" +
+                        "A brutal fighter. Great for pushing down the battlefield\n\n" +
+                        "Halberd\nHealth: 4/5\nDamage: 2/5\nStyle:Melee\nSpecial: Cleaves all enemies in an arc in front of him.\n" +
+                        "A devastating Knight that can deal damage to multiple enemies.\n\n" +
+                        "Axe\nHealth: 4/5\nDamage:Shield\nHealth: High\nDamage: Low\nRange: Melee\n");
+                battlefield.setImageResource(0);
+                knights.setImageResource(R.drawable.knights);
             default:
                 return super.onOptionsItemSelected(item);
         }

@@ -6,4 +6,6 @@
         android:id="@+id/mnuMap" />
     <item android:title="How To Battle"
         android:id="@+id/mnuBattle" />
+    <item android:title="Knight Guide"
+        android:id="@+id/knightGuide"/>
 </menu>
