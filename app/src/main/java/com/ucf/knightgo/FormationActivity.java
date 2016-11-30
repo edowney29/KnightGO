@@ -209,7 +209,7 @@ public class FormationActivity extends AppCompatActivity
                 armyFormation = new int[9];
 
                 //get the knight types for the users formation and populate an array
-                int typeList[] = new int[19];
+                int typeList[] = new int[9];
                 typeList[0] = getType(sa1);
                 typeList[1] = getType(sb1);
                 typeList[2] = getType(sc1);
@@ -276,13 +276,6 @@ public class FormationActivity extends AppCompatActivity
 
         // Enemy byte string length is 9*4 bits
         byte[] enemyBytes = new byte[typeList.length << 2];
-
-        // Combined formation is both player and enemy formations
-        int[] combinedFormation = new int[typeList.length*2];
-
-        // Copy players formation into 1st 9 indices
-        for(int i = 0;i<typeList.length;i++)
-            combinedFormation[i] = typeList[i];
 
         // Get connection type (Host or Server)
         Intent intentFromBlue = getIntent();

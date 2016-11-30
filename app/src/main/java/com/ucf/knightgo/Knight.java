@@ -365,13 +365,17 @@ public class Knight {
                     target = battlefield[attackRow][this.col];
 
                     // Non-friendly Knight occupies this space. We got a live one!
-                    if(!target.isEnemy()) {
+                    if(target != null && !target.isEnemy()) {
                         // Attack the enemy knight
                         target.modHealth(-this.damage);
 
                         // Enemy health hit 0 or lower. He's dead, Jim.
-                        if(target.getHealth() <= 0)
+                        if(target.getHealth() <= 0) {
                             battlefield[attackRow][this.col] = null;
+
+                            // Permadeath
+                            Player.getInstance().removeKnight(target.getType());
+                        }
 
                         // Not enough to kill the Knight, it goes back on the grid. Still Alive.
                         else
@@ -391,7 +395,7 @@ public class Knight {
                 while(attackRow >= 0 && Math.abs(attackRow - this.row) <= this.range) {
                     target = battlefield[attackRow][this.col];
 
-                    if(target.isEnemy()) {
+                    if(target != null && target.isEnemy()) {
                         target.modHealth(-this.damage);
 
                         if(target.getHealth() <= 0)
@@ -430,6 +434,7 @@ public class Knight {
 
                                 if (target.getHealth() <= 0) {
                                     battlefield[attackRow][this.col] = null;
+                                    Player.getInstance().removeKnight(target.getType());
                                 }
                                 else {
                                     battlefield[attackRow][this.col] = target;
@@ -444,6 +449,7 @@ public class Knight {
 
                         if (target.getHealth() <= 0) {
                             battlefield[attackRow][this.col] = null;
+                            Player.getInstance().removeKnight(target.getType());
                         }
                         else {
                             battlefield[attackRow][this.col] = target;
@@ -510,6 +516,7 @@ public class Knight {
 
                             if (target.getHealth() <= 0) {
                                 battlefield[attackRow][this.col] = null;
+                                Player.getInstance().removeKnight(target.getType());
                             }
                             else {
                                 battlefield[attackRow][this.col] = target;
@@ -569,6 +576,7 @@ public class Knight {
 
                         if (target.getHealth() <= 0) {
                             battlefield[attackRow][this.col] = null;
+                            Player.getInstance().removeKnight(target.getType());
                         }
                         else {
                             battlefield[attackRow][this.col] = target;
@@ -620,7 +628,9 @@ public class Knight {
         // All other Knights (move first, then attack)
         else {
             battlefield = this.move(battlefield);
-            battlefield = this.attack(battlefield);
+            if(this.row >= 0 && this.col >= 0 && this.row < battlefield.length && this.col < battlefield.length) {
+                battlefield = this.attack(battlefield);
+            }
         }
 
         return battlefield;

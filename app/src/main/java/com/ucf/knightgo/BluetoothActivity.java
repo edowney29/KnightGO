@@ -48,6 +48,7 @@ public class BluetoothActivity extends AppCompatActivity {
         if(blueAdapter == null) {
             DialogFragment noBluetooth = new NoBluetoothDialogFragment();
             noBluetooth.show(getFragmentManager(), "bluetooth");
+            finish();
         }
 
         else {
@@ -56,6 +57,14 @@ public class BluetoothActivity extends AppCompatActivity {
                 startActivityForResult(enableBtIntent, REQUEST_BT_ENABLE);
             }
             setupDeviceList();
+        }
+
+        // This is for Kevin's testing purposes:
+        // BAAAAAAAD DO NOT DO THIS OMG WHAT THE HELL STOP NO GET RID OF IT BEFORE RELEASE VERSION
+        for(int i=0; i<10; i++) {
+            for(int j=0; j<10; j++) {
+                Player.getInstance().addKnight(j);
+            }
         }
     }
 
