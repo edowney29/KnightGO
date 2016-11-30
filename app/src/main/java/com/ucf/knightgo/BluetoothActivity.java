@@ -61,11 +61,11 @@ public class BluetoothActivity extends AppCompatActivity {
 
         // This is for Kevin's testing purposes:
         // BAAAAAAAD DO NOT DO THIS OMG WHAT THE HELL STOP NO GET RID OF IT BEFORE RELEASE VERSION
-        for(int i=0; i<10; i++) {
+        /*for(int i=0; i<10; i++) {
             for(int j=0; j<10; j++) {
                 Player.getInstance().addKnight(j);
             }
-        }
+        }*/
     }
 
     private void setupDeviceList() {

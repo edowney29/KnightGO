@@ -206,7 +206,7 @@ public class FormationActivity extends AppCompatActivity
         {
             public void onClick(View v)
             {
-                armyFormation = new int[9];
+                armyFormation = new int[10];
 
                 //get the knight types for the users formation and populate an array
                 int typeList[] = new int[9];
@@ -224,13 +224,16 @@ public class FormationActivity extends AppCompatActivity
                 int emptyFlag = 0;
                 int insufFlag = 0;
                 int pegasusCount = 0;
-                for(int i= 0; i<9;i++)
+                for(int i= 0; i < typeList.length;i++)
                 {
-                    if(typeList[i] == -1)
+                    if(typeList[i] == -1) {
                         emptyFlag = 1;
-                    else
+                    }
+
+                    else {
                         // Build submitted army
                         armyFormation[typeList[i]]++;
+                    }
                 }
 
                 for(int i = 0; i<9;i++)
@@ -241,6 +244,7 @@ public class FormationActivity extends AppCompatActivity
                     }
                 }
 
+                pegasusCount = armyFormation[9];
 
                 // If an empty knight is found, notify user
                 if(emptyFlag == 1)

@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
 public class SimulationActivity extends AppCompatActivity {
     //public static final String SIMULATION = "com.ucf.knightgo.Simulation";
@@ -117,7 +118,7 @@ public class SimulationActivity extends AppCompatActivity {
                 this.battlefield = currentKnight.turn(this.battlefield);
 
                 // Check for Knights that reached the other end of the battlefield
-                if (currentKnight.getRow() < 0 && currentKnight.getCol() < 0) {
+                if (currentKnight.getRow() < 0) {
 
                     // The Knight belonged to the enemy
                     if (currentKnight.isEnemy()) {
@@ -151,6 +152,29 @@ public class SimulationActivity extends AppCompatActivity {
                 }
             }
 
+            // Check for dead Knights
+            for(int j=0; j < battlefield.length; j++) {
+                for(int k=0; k < battlefield[0].length; k++) {
+                    // The sign of a dead Knight
+                    if(battlefield[j][k] != null && battlefield[j][k].getDamage() < 0) {
+
+                        // Look for the dead Knight's spot in the turn sequence
+                        for(int l=0; l < knightsRow.length; l++) {
+
+                            if(battlefield[j][k].getRow() == knightsRow[l]
+                                    && battlefield[j][k].getCol() == knightsCol[l]) {
+
+                                // Set values to -1 and cell in battlefield to null
+                                knightsRow[l] = -1;
+                                knightsCol[l] = -1;
+                                battlefield[j][k] = null;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
             i++;
 
             // Go back to the first Knight's turn
@@ -163,13 +187,14 @@ public class SimulationActivity extends AppCompatActivity {
     /** Assigns a result based on the final scores of both players */
     private void battleResult() {
         if(playerScore > enemyScore)
-            result = "Victory!";
+            result = "VICTORY!";
         else if(enemyScore > playerScore)
-            result = "Defeat!";
+            result = "DEFEAT!";
         else
-            result = "Draw!";
+            result = "DRAW!";
 
-        // Display result
+        TextView textView = (TextView)findViewById(R.id.text_result);
+        textView.setText(result);
     }
 
     /** Returns the player to the main menu */
