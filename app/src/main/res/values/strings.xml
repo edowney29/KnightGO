@@ -3,6 +3,9 @@
     <string name="title_activity_maps">Map</string>
     <string name="dialog_no_bluetooth">No Bluetooth adapter detected.</string>
     <string name="okay">Okay</string>
+    <string name="explore">Explore</string>
+    <string name="battle">Battle</string>
+    <string name="how_to_play">How To Play</string>
     <string name="battle_start">Find a Battleground</string>
     <string name="battle_wait">Host a Battleground</string>
     <string name="title_activity_formation">FormationActivity</string>

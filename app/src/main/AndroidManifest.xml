@@ -30,6 +30,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name="com.ucf.knightgo.MainMenu"
+            android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

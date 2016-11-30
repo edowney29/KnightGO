@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_mainmenu"
     android:layout_width="match_parent"
@@ -12,7 +13,7 @@
     android:background="@android:color/background_dark">
 
     <Button
-        android:text="Battle"
+        android:text="@string/battle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="25dp"
@@ -23,7 +24,7 @@
         android:layout_alignEnd="@+id/tutorial_button" />
 
     <Button
-        android:text="Explore"
+        android:text="@string/explore"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/explore_button"
@@ -34,20 +35,8 @@
         android:layout_alignStart="@+id/tutorial_button"
         android:layout_alignEnd="@+id/tutorial_button" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Knight GO"
-        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="66dp"
-        android:textStyle="normal|bold"
-        android:textSize="36sp"
-        android:textColor="@android:color/white" />
-
     <Button
-        android:text="How to Play"
+        android:text="@string/how_to_play"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="33dp"
@@ -55,4 +44,13 @@
         android:onClick="openTutorial"
         android:layout_below="@+id/battle_button"
         android:layout_centerHorizontal="true" />
+
+    <ImageView
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/knight_go_logo"
+        android:id="@+id/imageView3"
+        android:layout_above="@+id/explore_button"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="19dp" />
 </RelativeLayout>
