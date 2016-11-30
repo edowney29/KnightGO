@@ -19,7 +19,6 @@
 
     <uses-feature android:name="android.hardware.camera" />
 
-    <uses-sdk tools:overrideLibrary="james.a.grant.wagon"/>
 
     <application
         android:name="android.support.multidex.MultiDexApplication"

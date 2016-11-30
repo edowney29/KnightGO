@@ -248,7 +248,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         knightLoc.setLongitude(curKnight.getLongitude());
 
         // If player is within pickup range of selected knight, move to Camera activity.
-        if(mLastLocation.distanceTo(knightLoc) <= pickupRange || true) {
+        if(mLastLocation.distanceTo(knightLoc) <= pickupRange) {
             Intent intent = new Intent(this, CameraViewActivity.class);
             intent.putExtra("icon", selectedKnight.getBigIcon());
             intent.putExtra("kLat", selectedKnight.getLatitude());
@@ -303,8 +303,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
     @Override
-    public void onResume(){
-        super.onResume();
+    public void onRestart(){
+        super.onRestart();
         // Start location updates
         if(mGoogleApiClient != null) {
             if (!mGoogleApiClient.isConnected()) {
@@ -315,6 +315,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     == PackageManager.PERMISSION_GRANTED) {
                 LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
             }
+        }
+        else{
+            buildGoogleApiClient();
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
         }
     }
 
