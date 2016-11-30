@@ -2,9 +2,9 @@
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:title="How To Get Knights"
+    <item android:title="How to Form Your Army"
         android:id="@+id/mnuMap" />
-    <item android:title="How To Battle"
+    <item android:title="How to Battle"
         android:id="@+id/mnuBattle" />
     <item android:title="Knight Guide"
         android:id="@+id/knightGuide"/>

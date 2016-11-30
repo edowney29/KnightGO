@@ -20,22 +20,21 @@
 
     <TextView
         android:text="TextView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="222dp"
+        android:layout_height="400dp"
         android:id="@+id/tvInfo"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginBottom="16dp"
         android:layout_marginTop="8dp"
         app:layout_constraintTop_toBottomOf="@+id/tvTittle"
-        app:layout_constraintVertical_bias="1.0"
         android:layout_marginStart="16dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/btnMainMenu"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintRight_toLeftOf="@+id/imgKnights"
         tools:layout_constraintTop_creator="1"
-        tools:layout_constraintRight_creator="1"
-        tools:layout_constraintBottom_creator="1"
-        tools:layout_constraintLeft_creator="1" />
+        tools:layout_constraintLeft_creator="1"
+        app:layout_constraintVertical_bias="0.32999998"
+        app:layout_constraintHorizontal_bias="0.0"
+        android:layout_marginEnd="8dp" />
 
     <TextView
         android:text="Welcome to Knight GO! "
@@ -44,12 +43,12 @@
         android:id="@+id/tvTittle"
         android:textStyle="normal|bold"
         android:textSize="24sp"
-        app:layout_constraintRight_toRightOf="parent"
         android:layout_marginTop="16dp"
         app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="16dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        tools:layout_constraintRight_creator="1"
-        tools:layout_constraintLeft_creator="1" />
+        android:layout_marginEnd="16dp"
+        app:layout_constraintRight_toRightOf="parent" />
 
     <ImageView
         android:layout_width="102dp"
@@ -71,6 +70,8 @@
         app:layout_constraintBottom_toTopOf="@+id/btnMainMenu"
         app:layout_constraintTop_toTopOf="@+id/tvInfo"
         tools:layout_constraintTop_creator="1"
-        tools:layout_constraintBottom_creator="1" />
+        tools:layout_constraintBottom_creator="1"
+        app:layout_constraintVertical_bias="1.0"
+        android:layout_marginEnd="16dp" />
 
 </android.support.constraint.ConstraintLayout>
