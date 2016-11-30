@@ -223,6 +223,7 @@ public class FormationActivity extends AppCompatActivity
                 // Scan every cell for an empty knight (value -1)
                 int emptyFlag = 0;
                 int insufFlag = 0;
+                int pegasusCount = 0;
                 for(int i= 0; i<9;i++)
                 {
                     if(typeList[i] == -1)
@@ -240,6 +241,7 @@ public class FormationActivity extends AppCompatActivity
                     }
                 }
 
+
                 // If an empty knight is found, notify user
                 if(emptyFlag == 1)
                 {
@@ -249,17 +251,25 @@ public class FormationActivity extends AppCompatActivity
                 }
                 else
                 {
-                    // If there wasn't enough Knights in inventory for Formation, notify user
-                    if(insufFlag == 1)
+                    // If > 1 pegasus is in formation, notify user
+                    if(pegasusCount > 1)
                     {
                         Context context = getApplicationContext();
-                        Toast insufKnights = Toast.makeText(context,"Not enough knights for formation. Go collect some!", Toast.LENGTH_LONG);
-                        insufKnights.show();
+                        Toast pegasusOvrflw = Toast.makeText(context,"Only 1 Pegasus allowed per formation", Toast.LENGTH_LONG);
+                        pegasusOvrflw.show();
                     }
-                    // Else all spots are filled and formation is valid.
                     else
                     {
-                        goToSimulation(v, typeList);
+                        // If there wasn't enough Knights in inventory for Formation, notify user
+                        if (insufFlag == 1) {
+                            Context context = getApplicationContext();
+                            Toast insufKnights = Toast.makeText(context, "Not enough knights for formation. Go collect some!", Toast.LENGTH_LONG);
+                            insufKnights.show();
+                        }
+                        // Else all spots are filled and formation is valid.
+                        else {
+                            goToSimulation(v, typeList);
+                        }
                     }
                 }
             }
