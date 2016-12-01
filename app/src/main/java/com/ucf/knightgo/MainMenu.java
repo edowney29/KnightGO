@@ -11,6 +11,7 @@ public class MainMenu extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mainmenu);
+        Player.getInstance().loadInventory(this);
     }
 
     public void openMap(View view) {

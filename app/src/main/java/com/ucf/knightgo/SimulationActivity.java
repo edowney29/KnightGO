@@ -186,6 +186,7 @@ public class SimulationActivity extends AppCompatActivity {
 
     /** Assigns a result based on the final scores of both players */
     private void battleResult() {
+        Player.getInstance().saveInventory(this);
         if(playerScore > enemyScore)
             result = "VICTORY!";
         else if(enemyScore > playerScore)
