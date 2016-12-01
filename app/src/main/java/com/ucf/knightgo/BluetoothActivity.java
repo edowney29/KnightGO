@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -131,6 +132,10 @@ public class BluetoothActivity extends AppCompatActivity {
         Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
         discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 0);
         startActivity(discoverableIntent);
+
+        TextView waitText = (TextView)findViewById(R.id.text_waiting);
+        waitText.setVisibility(View.VISIBLE);
+
         AcceptThread waiting = new AcceptThread();
         waiting.start();
     }
