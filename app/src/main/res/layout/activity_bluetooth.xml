@@ -36,4 +36,15 @@
         android:layout_above="@+id/button_wait"
         android:layout_centerHorizontal="true" />
 
+    <TextView
+        android:text="@string/text_wait"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/text_waiting"
+        android:layout_alignBaseline="@+id/button_wait"
+        android:layout_alignBottom="@+id/button_wait"
+        android:layout_toStartOf="@+id/button_wait"
+        android:layout_marginEnd="11dp"
+        android:visibility="gone" />
+
 </RelativeLayout>
