@@ -40,16 +40,16 @@ public class Player {
         SharedPreferences.Editor preferenceEditor;
 
         preferenceSettings = context.getSharedPreferences("prefs", context.MODE_PRIVATE);
-        Inventory[0] = preferenceSettings.getInt("0",6);
-        Inventory[1] = preferenceSettings.getInt("1",6);
-        Inventory[2] = preferenceSettings.getInt("2",6);
-        Inventory[3] = preferenceSettings.getInt("3",6);
-        Inventory[4] = preferenceSettings.getInt("4",6);
-        Inventory[5] = preferenceSettings.getInt("5",6);
-        Inventory[6] = preferenceSettings.getInt("6",6);
-        Inventory[7] = preferenceSettings.getInt("7",6);
-        Inventory[8] = preferenceSettings.getInt("8",6);
-        Inventory[9] = preferenceSettings.getInt("9",6);
+        Inventory[0] = preferenceSettings.getInt("0",1);
+        Inventory[1] = preferenceSettings.getInt("1",1);
+        Inventory[2] = preferenceSettings.getInt("2",1);
+        Inventory[3] = preferenceSettings.getInt("3",1);
+        Inventory[4] = preferenceSettings.getInt("4",1);
+        Inventory[5] = preferenceSettings.getInt("5",1);
+        Inventory[6] = preferenceSettings.getInt("6",1);
+        Inventory[7] = preferenceSettings.getInt("7",1);
+        Inventory[8] = preferenceSettings.getInt("8",1);
+        Inventory[9] = preferenceSettings.getInt("9",1);
     }
 
     public void saveInventory(Context context)
